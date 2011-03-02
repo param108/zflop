@@ -1,0 +1,121 @@
+/*
+////////////////////////////////////////////////////////////////////////////////
+//
+//  ADOBE SYSTEMS INCORPORATED
+//  Copyright 2006 Adobe Systems Incorporated
+//  All Rights Reserved.
+//
+//  NOTICE: Adobe permits you to use, modify, and distribute this file
+//  in accordance with the terms of the license agreement accompanying it.
+//
+////////////////////////////////////////////////////////////////////////////////
+*/
+
+global {
+	font-family: "Verdana";
+	font-size: 10px;
+	color: #666666;
+	bevel: true;
+}
+
+Panel {
+	header-colors: #FFFFFF, #FFFFFF;
+	footer-colors: #E0E7E8, #E0E7E8;
+	corner-radius: 3;
+	drop-shadow: false;
+}
+
+Accordion {
+	font-size:9;
+	font-weight: "bold";
+	fill-colors: #F7F7F7, #F7F7F7;
+	selected-fill-colors: #E0E7E8, #E0E7E8;
+	background-color: #F7F7F7;
+}
+
+Alert {
+	font-weight: "bold";
+	header-colors: #E0E7E8, #E0E7E8;
+	corner-radius:3;
+	background-color:#E0E7E8;
+}
+
+Application {	
+	color: #222222;
+	text-roll-over-color: #222222;
+	theme-color: #599ACE;
+	background-color: #B3C3CE;
+}
+
+Button {
+	color: #444444;
+	text-roll-over-color: #444444;
+	font-size: 9px;
+	font-weight: "bold";
+	fill-colors: #F7F7F7, #E6E6E6;
+	corner-radius: 2;
+	border-thickness: 0;
+	border-color: #FF8608;
+}
+
+CheckBox {
+	fill-colors: #F7F7F7, #E6E6E6;
+	border-color: #777777;
+}
+
+ComboBox {
+	color: #444444;
+	text-roll-over-color: #444444;
+	font-size: 9px;
+	font-weight: "bold";
+	fill-colors: #F7F7F7, #E6E6E6;
+	corner-radius: 2;
+	border-color: #777777;
+}
+
+DataGrid {
+	alternating-row-colors:#F7F7F7,#EEEEEE;
+	border-style:"solid";
+	border-color:#AAAAAA;
+	header-color:#FFFFFF;
+	v-grid-line-color:#CCCCCC;
+	color:#222222;
+	font-size:9;
+	text-indent:4;
+}
+
+NumericStepper {	
+	fill-colors: #F7F7F7, #F7F7F7;
+	corner-radius: 2;
+	border-color: #777777;
+}
+
+RadioButton {
+	fill-colors: #F7F7F7, #E6E6E6;
+	border-color: #777777;
+}
+
+ScrollBar {
+	fill-colors: #F7F7F7, #E6E6E6;
+	border-color: #777777;
+	corner-radius: 2;
+	track-colors: #EEEEEE, #EEEEEE;
+}
+
+HSlider {
+	fill-colors: #F7F7F7, #E6E6E6;
+	track-colors: #B3C3CE, #B3C3CE;
+	border-color: #777777;
+	tick-color: #CCCCCC;
+	tick-offset: -3;
+	show-track-highlight: false;
+	label-offset: -4;
+}
+
+TextInput {
+	font-size: 10px;
+	font-weight: "normal";
+	color: #333333;
+}
+
+

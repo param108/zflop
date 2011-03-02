@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<library rsl="Flex_misc.sws">  
+  <namespace uri="*">
+	<component name="CartView"/>
+	<component name="Checkout"/>
+	<component name="CreditCardPicker"/>
+	<component name="GridView"/>
+	<component name="PanelControl"/>
+	<component name="ProductDetail"/>
+	<component name="ProductThumbnail"/>
+	<component name="RequiredFieldValidator"/>	
+	<component name="ShoppingCart"/>
+	<component name="StatePicker"/>	
+	<component name="ThumbnailView"/>
+  </namespace>
+  <embed source="assets/images/thumb_on.png" />
+  <embed source="assets/images/thumb_off.png" />
+  <embed source="assets/images/list_on.png" />
+  <embed source="assets/images/list_off.png" />
+  <embed source="assets/images/thumb_roll.png" />
+  <embed source="assets/images/list_roll.png" />
+  <embed source="assets/products/tg-logo.gif" />
+</library>
+

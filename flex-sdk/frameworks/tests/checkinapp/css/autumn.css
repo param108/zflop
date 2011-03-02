@@ -1,0 +1,141 @@
+/*
+////////////////////////////////////////////////////////////////////////////////
+//
+//  ADOBE SYSTEMS INCORPORATED
+//  Copyright 2006 Adobe Systems Incorporated
+//  All Rights Reserved.
+//
+//  NOTICE: Adobe permits you to use, modify, and distribute this file
+//  in accordance with the terms of the license agreement accompanying it.
+//
+////////////////////////////////////////////////////////////////////////////////
+*/
+
+global {
+	font-family:"Tahoma";
+	font-size:11px;
+	color:#222222;
+}
+
+Application {
+	theme-color:#CC6600;
+	selection-color:#D0DFE6;
+	roll-over-color:#E6F0F3;
+	background-image:"backgrounds/autumn.swf";
+	background-size:"100%";
+	background-color:#854230;
+}
+
+
+Panel {
+	header-colors: #FAEED1, #E3C38D;
+	footer-colors: #F4DBB0, #E3C38D;
+	corner-radius:10;
+	drop-shadow:"true";
+	shadow-distance:6;
+	margin-top:0;
+	margin-left:0;
+	margin-right:0;
+	margin-bottom:0;	
+}
+
+Alert {
+	header-colors: #FAEED1, #E3C38D;
+	corner-radius:10;
+}
+
+Button {
+	color: #FFFFFF;
+	disabled-color: #999999;
+	text-roll-over-color: #FFFFFF;
+	font-family:"Verdana";
+	font-size: 9px;
+	font-weight: "bold";
+	fill-colors: #C86336, #763322;
+	corner-radius:8;
+	border-color: #854230;
+	border-thickness:3;
+}
+
+
+
+
+DataGrid {
+	alternating-row-colors:#FFFCEC,#FFF6E2;
+	border-style:"solid";
+	border-color:#CCCCCC;
+	header-color:#FAEED1;
+	v-grid-line-color:#CCCCCC;
+	color:#111111;
+	font-size:9px;
+	text-indent:4;
+}
+
+NumericStepper {
+	color: #111111;
+	font-size: 9px;
+	font-weight: "bold";
+	fill-colors: #FFFFFF, #C2CCCF;
+	corner-radius: 7;
+	border-style: "inset";
+	border-thickness: 0;
+	border-color: #854230;
+}
+
+
+
+ComboBox {
+	color: #111111;
+	text-roll-over-color: #111111;
+	font-size:9px;
+	font-weight: "bold";
+	fill-colors: #FFFFFF, #C2CCCF;
+	background-color: #FFFCEC;	
+	corner-radius: 7;
+	border-thickness: 1;
+	border-color: #854230;
+	margin-left: 6;
+	selection-color:#f5dcb2;
+	roll-over-color:#faeed1;
+
+}
+
+
+HSlider {
+	fill-colors: #FFFFFF, #C2CCCF;
+	track-colors: #FAEED1, #E3C38D;
+	border-color: #666666;
+	tick-color: #666666;
+	label-offset: -3;
+	tick-offset: -3;
+	show-track-highlight: true;
+}
+
+
+Accordion {
+	margin-top:-11;
+	color: #111111;
+	font-size:9px;
+	font-weight: "bold";
+	text-roll-over-color: #111111;
+	fill-colors: #FFFCEC,#FAEED1;
+	selected-fill-colors: #DB924A,#8E4632;
+	border-style: "solid";
+	background-color: #FFFCEC;
+}
+
+ScrollBar {
+	fill-colors: #FFFFFF, #C2CCCF;
+	border-color: #854230;
+	corner-radius: 4;
+	track-colors: #8E4632, #E3C38D;
+}
+
+
+RadioButton {
+	fill-colors: #FFFFFF, #C2CCCF;
+	border-color: #854230;
+}
+
+
+

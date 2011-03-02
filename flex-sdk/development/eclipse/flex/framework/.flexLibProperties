@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flexLibProperties version="1">
+<includeClasses>
+<classEntry path="FrameworkClasses"/>
+</includeClasses>
+<includeResources>
+<resourceEntry destPath="mx/containers/FormItem.png" sourcePath="mx/containers/FormItem.png"/>
+<resourceEntry destPath="mx/controls/MenuBar.png" sourcePath="mx/controls/MenuBar.png"/>
+<resourceEntry destPath="mx/controls/DateChooser.png" sourcePath="mx/controls/DateChooser.png"/>
+<resourceEntry destPath="mx/containers/ControlBar.png" sourcePath="mx/containers/ControlBar.png"/>
+<resourceEntry destPath="mx/controls/DataGrid.png" sourcePath="mx/controls/DataGrid.png"/>
+<resourceEntry destPath="mx/controls/assets/icon_align_right.png" sourcePath="mx/controls/assets/icon_align_right.png"/>
+<resourceEntry destPath="mx/controls/Menu.png" sourcePath="mx/controls/Menu.png"/>
+<resourceEntry destPath="mx/controls/HScrollBar.png" sourcePath="mx/controls/HScrollBar.png"/>
+<resourceEntry destPath="mx/controls/List.png" sourcePath="mx/controls/List.png"/>
+<resourceEntry destPath="mx/containers/TitleWindow.png" sourcePath="mx/containers/TitleWindow.png"/>
+<resourceEntry destPath="mx/controls/assets/icon_style_bold.png" sourcePath="mx/controls/assets/icon_style_bold.png"/>
+<resourceEntry destPath="mx/containers/Form.png" sourcePath="mx/containers/Form.png"/>
+<resourceEntry destPath="mx/controls/assets/divider_vertical.png" sourcePath="mx/controls/assets/divider_vertical.png"/>
+<resourceEntry destPath="mx/containers/VDividedBox.png" sourcePath="mx/containers/VDividedBox.png"/>
+<resourceEntry destPath="mx/controls/Image.png" sourcePath="mx/controls/Image.png"/>
+<resourceEntry destPath="mx/controls/VRule.png" sourcePath="mx/controls/VRule.png"/>
+<resourceEntry destPath="mx/containers/Canvas.png" sourcePath="mx/containers/Canvas.png"/>
+<resourceEntry destPath="mx/controls/VSlider.png" sourcePath="mx/controls/VSlider.png"/>
+<resourceEntry destPath="mx/controls/assets/icon_align_center.png" sourcePath="mx/controls/assets/icon_align_center.png"/>
+<resourceEntry destPath="mx/controls/Text.png" sourcePath="mx/controls/Text.png"/>
+<resourceEntry destPath="mx/controls/ProgressBar.png" sourcePath="mx/controls/ProgressBar.png"/>
+<resourceEntry destPath="mx/controls/TextArea.png" sourcePath="mx/controls/TextArea.png"/>
+<resourceEntry destPath="mx/controls/HSlider.png" sourcePath="mx/controls/HSlider.png"/>
+<resourceEntry destPath="mx/controls/Button.png" sourcePath="mx/controls/Button.png"/>
+<resourceEntry destPath="mx/controls/colorPickerClasses/SwatchPanel.png" sourcePath="mx/controls/colorPickerClasses/SwatchPanel.png"/>
+<resourceEntry destPath="mx/containers/Grid.png" sourcePath="mx/containers/Grid.png"/>
+<resourceEntry destPath="mx/core/Repeater.png" sourcePath="mx/core/Repeater.png"/>
+<resourceEntry destPath="mx/containers/ApplicationControlBar.png" sourcePath="mx/containers/ApplicationControlBar.png"/>
+<resourceEntry destPath="mx/controls/LinkBar.png" sourcePath="mx/controls/LinkBar.png"/>
+<resourceEntry destPath="mx/controls/VScrollBar.png" sourcePath="mx/controls/VScrollBar.png"/>
+<resourceEntry destPath="mx/controls/DateField.png" sourcePath="mx/controls/DateField.png"/>
+<resourceEntry destPath="mx/containers/Panel.png" sourcePath="mx/containers/Panel.png"/>
+<resourceEntry destPath="mx/controls/RadioButtonGroup.png" sourcePath="mx/controls/RadioButtonGroup.png"/>
+<resourceEntry destPath="mx/containers/Box.png" sourcePath="mx/containers/Box.png"/>
+<resourceEntry destPath="mx/controls/assets/icon_style_underline.png" sourcePath="mx/controls/assets/icon_style_underline.png"/>
+<resourceEntry destPath="mx/controls/RichTextEditor.png" sourcePath="mx/controls/RichTextEditor.png"/>
+<resourceEntry destPath="mx/controls/assets/icon_align_justify.png" sourcePath="mx/controls/assets/icon_align_justify.png"/>
+<resourceEntry destPath="mx/controls/ColorPicker.png" sourcePath="mx/controls/ColorPicker.png"/>
+<resourceEntry destPath="mx/containers/TabNavigator.png" sourcePath="mx/containers/TabNavigator.png"/>
+<resourceEntry destPath="mx/controls/assets/icon_align_left.png" sourcePath="mx/controls/assets/icon_align_left.png"/>
+<resourceEntry destPath="mx/controls/SWFLoader.png" sourcePath="mx/controls/SWFLoader.png"/>
+<resourceEntry destPath="mx/controls/Spacer.png" sourcePath="mx/controls/Spacer.png"/>
+<resourceEntry destPath="mx/containers/DividedBox.png" sourcePath="mx/containers/DividedBox.png"/>
+<resourceEntry destPath="mx/containers/VBox.png" sourcePath="mx/containers/VBox.png"/>
+<resourceEntry destPath="mx/controls/LinkButton.png" sourcePath="mx/controls/LinkButton.png"/>
+<resourceEntry destPath="mx/controls/HorizontalList.png" sourcePath="mx/controls/HorizontalList.png"/>
+<resourceEntry destPath="mx/containers/FormHeading.png" sourcePath="mx/containers/FormHeading.png"/>
+<resourceEntry destPath="mx/controls/RadioButton.png" sourcePath="mx/controls/RadioButton.png"/>
+<resourceEntry destPath="mx/controls/assets/icon_bullet.png" sourcePath="mx/controls/assets/icon_bullet.png"/>
+<resourceEntry destPath="mx/containers/HBox.png" sourcePath="mx/containers/HBox.png"/>
+<resourceEntry destPath="mx/containers/Tile.png" sourcePath="mx/containers/Tile.png"/>
+<resourceEntry destPath="mx/controls/Tree.png" sourcePath="mx/controls/Tree.png"/>
+<resourceEntry destPath="mx/controls/assets/icon_style_italic.png" sourcePath="mx/controls/assets/icon_style_italic.png"/>
+<resourceEntry destPath="mx/containers/Accordion.png" sourcePath="mx/containers/Accordion.png"/>
+<resourceEntry destPath="mx/controls/ButtonBar.png" sourcePath="mx/controls/ButtonBar.png"/>
+<resourceEntry destPath="mx/controls/CheckBox.png" sourcePath="mx/controls/CheckBox.png"/>
+<resourceEntry destPath="mx/controls/TabBar.png" sourcePath="mx/controls/TabBar.png"/>
+<resourceEntry destPath="mx/controls/TileList.png" sourcePath="mx/controls/TileList.png"/>
+<resourceEntry destPath="mx/controls/NumericStepper.png" sourcePath="mx/controls/NumericStepper.png"/>
+<resourceEntry destPath="mx/controls/VideoDisplay.png" sourcePath="mx/controls/VideoDisplay.png"/>
+<resourceEntry destPath="mx/controls/Label.png" sourcePath="mx/controls/Label.png"/>
+<resourceEntry destPath="mx/controls/TextInput.png" sourcePath="mx/controls/TextInput.png"/>
+<resourceEntry destPath="mx/containers/ViewStack.png" sourcePath="mx/containers/ViewStack.png"/>
+<resourceEntry destPath="mx/controls/ComboBox.png" sourcePath="mx/controls/ComboBox.png"/>
+<resourceEntry destPath="mx/containers/HDividedBox.png" sourcePath="mx/containers/HDividedBox.png"/>
+<resourceEntry destPath="mx/controls/HRule.png" sourcePath="mx/controls/HRule.png"/>
+</includeResources>
+<namespaceManifests>
+<namespaceManifestEntry manifest="../manifest.xml" namespace="http://www.adobe.com/2006/mxml"/>
+</namespaceManifests>
+</flexLibProperties>

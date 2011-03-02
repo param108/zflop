@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+                                width="1200" height="700" paddingTop="8" verticalGap="0" xmlns:flexqa="http://www.adobe.com/2006/flexqa"
+                                creationComplete="initListComponents();initMenuComponents();startMyTests()" >
+
+    <!-- Style sheet used in this application -->
+    <mx:Style source="componentSmoke.css"/>
+
+    <!-- Part of the ActionScript code for this class is externalized in a separate .as file for better readability -->
+    <mx:Script source="componentSmoke_script.as"/>
+    
+        <mx:Script>
+        <![CDATA[
+
+        include "componentSmoke_tests.as";
+        
+        public function startMyTests():void
+        {    
+            MXUnitManager.delay = 5000;
+            MXUnitManager.addTests(this,
+                        [
+                                "testStartUp",
+                                "testForCheckbox",
+                                "testForRadio1",
+                                "testForRadio2",
+                                "testForTextInput",
+                                "testForTextArea",
+                                //"testForCombobox1",
+                                //"testForCombobox2",
+                                //"testForColorPicker1",
+                                "testForNumericStepper",
+                                "testForNumericStepper1",
+                                "testForNumericStepper2",
+                                "testForDateField",
+                                "testForDateField2",
+                                "testForDateField3",
+                                "testForMenu",
+                                "testForMenu2",
+                                "testForMenu3",
+                                "testForMenu4",
+                                "testForMenuBar1",
+                                "testForMenuBar2",
+                                "testForMenuBar3",
+                                "testTabFocus1",
+                                "testTabFocus2",
+                                "testTabFocus3",
+                                "testDragDrop1",
+                                "testForTreeNode1",
+                                "testForTreeNode2",
+                                "testForImage",
+                                "testForTestField",  
+                                "testForSlider"
+                        ], 2000);
+        }
+
+                import flash.events.*;
+                import flash.geom.*;
+                import flash.net.*;
+                import mx.controls.*;
+                import mx.events.*;
+                import mx.managers.*;
+
+
+                public var testScript:XML;
+                public var urlLoader:URLLoader;
+
+                public function initApp():void
+                {
+                        var testURL:URLRequest = new URLRequest("smoke.xml");
+                        urlLoader = new URLLoader();
+                        urlLoader.addEventListener("complete", _completeEventHandler);
+                        urlLoader.load(testURL);
+                }
+
+                public function _completeEventHandler(event:Event):void
+                {
+                        testScript = new XML(urlLoader.data);
+                        //startTests(testScript);
+                }
+
+                public var sliderThumb:UIComponent;
+
+                public function getSliderThumb():void
+                {
+                        sliderThumb = testSlider.getThumbAt(0);
+                }
+
+                public var comboDP:Array = ["Fred", "Barney", "Wilma", "Betty", "Pebbles", "Bam Bam"];
+
+                public var listDP:Array = [
+           { Artist:'Pavement', Album:'Enchanted and Slanted', Price:11.99, Rating:'Excellent' },
+           { Artist:'Pavement', Album:'Rain Crooked, Rain Crooked', Price:10.99, Rating:'Excellent' },
+           { Artist:'Pavement', Album:'Zowee Wowee', Price:12.99, Rating:'Excellent' },
+           { Artist:'Pavement', Album:'Corners the Brighten', Price:11.99, Rating:'Good' },
+           { Artist:'Pavement', Album:'Twilight Terror', Price:11.99, Rating:'Good' },
+           { Artist:'Other', Album:'Other', Price:5.99, Rating:'Bad' }
+                   ];
+ 
+
+                public var treeDP:Array = [ { label: "Inbox", children: [
+                                                                                 { label: "Personal", data: "personal"},
+                                                                                 { label: "Marketing", data: "mktg"},
+                                                                                 { label: "To do", data: "todo"} ]},
+                                                                   { label: "Calendar", children: [
+                                                                                 { label: "Appointments", data: "appointments"},
+                                                                                 { label: "Meetings", data: "meetings"} ]}, 
+                                                                   { label: "Sent", data: "sent" },
+                                                                   { label: "Deleted Items", data: "deleted" },
+                                                                   { label: "Spam", data: "spam" } ];
+
+        public var dataGridDP:Array =
+         [
+           { Artist:'Pavement', Album:'Slanted and Enchanted', Price:11.99, Rating:'Excellent' },
+           { Artist:'Pavement', Album:'Crooked Rain, Crooked Rain', Price:10.99, Rating:'Excellent' },
+           { Artist:'Pavement', Album:'Wowee Zowee', Price:12.99, Rating:'Excellent' },
+           { Artist:'Pavement', Album:'Brighten the Corners', Price:11.99, Rating:'Good' },
+           { Artist:'Pavement', Album:'Terror Twilight', Price:11.99, Rating:'Good' },
+           { Artist:'Other', Album:'Other', Price:5.99, Rating:'Bad' }
+         ];
+
+                public function initListComponents():void
+                {
+                        testList.dataProvider = listDP;
+                        testTree.dataProvider = treeDP;
+                        testDataGrid.dataProvider = dataGridDP;
+                        testCombo.dataProvider = comboDP;
+
+                }
+
+                public function initTextComponent():void
+                {
+                        testText.htmlText = "This is a <b>Text</b> component that contains <i>html</i><br>The <b>Slider</b> controls the alpha of the <b>Image</b>";
+                }
+
+                public var menuDP:Object = {label: "top", children: [
+                                                                        {label: "File", children: [
+                                                                                {label: "Open"},
+                                                                                {label: "New File"}     ]},
+                                                                        {label: "Edit", children: [
+                                                                                {label: "Copy"},
+                                                                                {label: "Paste"},
+                                                                                {label: "Send"} ]},
+                                                                        {label: "Window"} ]};
+
+                public var menuBarDP:Object = {label: "top", children: [
+                                                                        {label: "File", children: [
+                                                                                {label: "Open"},
+                                                                                {label: "New", children: [
+                                                                                        { label: "File"},
+                                                                                        { label: "Folder"} ]} ]},
+                                                                        {label: "Edit", children: [
+                                                                                {label: "Copy"},
+                                                                                {label: "Paste"},
+                                                                                {label: "Send"} ]},
+                                                                        {label: "Window"} ]};
+
+                public function initMenuComponents():void
+                {
+                        testMenuBar.dataProvider = menuBarDP;
+                }
+
+                public var testMenu:Menu;
+
+                public function createAndShowMenu():void
+                {
+                        var menu:Menu = Menu.createMenu(null, menuDP, false);
+                        testMenu = menu;
+                        var point:Point = new Point(0, 0);
+                        point = testImage.localToGlobal(point);
+                        menu.show(point.x, point.y);
+                        menu.addEventListener("itemClick", menuChanged);
+                }
+
+                public function menuChanged(event:Event):void
+                {
+                		testMenuLabel.text = MenuEvent(event).item.label;
+                }
+
+                public function insertItemInTree():void
+                {
+                        var c:ICollectionView = ICollectionView(testTree.dataProvider);
+                        var cursor:IViewCursor = c.createCursor();
+                        cursor.seek(CursorBookmark.FIRST, 1);
+                        cursor.insert({label:'Archive', data:'archive'});
+                }
+
+        ]]>
+
+        </mx:Script>
+
+    <mx:VBox height="100%">
+
+                <mx:HBox width="100%" height="20">
+                <mx:Label text="current focus: " />
+                    <mx:Label id="focusWidget" />
+                </mx:HBox>
+
+                <mx:ViewStack width="100%" height="90%">
+
+                        <mx:HBox width="100%" height="100%" >
+
+                                <mx:Panel width="25%" height="100%" title="Basic Components" >
+
+                                        <mx:Button id="testButton" label="test button" click="testLabel.text='This is a test'" />
+
+                                        <mx:Label id="testLabel" text="test" />
+
+                                        <mx:CheckBox id="testCheckBox" label="test CheckBox" />
+
+                                        <mx:RadioButton id="testRadio1" label="test Radio1" />
+                                        <mx:RadioButton id="testRadio2" label="test Radio2" />
+                                        <mx:RadioButton id="testRadio3" label="test Radio3" />
+
+                                        <mx:TextInput id="testTextInput" width="100" />
+
+                                        <mx:TextArea id="testTextArea" width="100" height="100" />
+
+                                        <mx:ComboBox id="testCombo" />
+                                        
+                                        <mx:ColorPicker id="testColorPicker" />
+
+                                        <mx:NumericStepper id="testNumStep" />
+
+                                        <mx:DateField id="testDateField" />
+
+                                        <mx:DateChooser id="testDateChooser" />
+
+                                </mx:Panel>
+
+                                <mx:Panel width="25%" height="100%" title="List Components" >
+
+                                        <mx:List id="testList" labelField="Album" dragEnabled="true" dragMoveEnabled="false" />
+
+                                        <mx:Tree id="testTree" />
+
+                                        <mx:DataGrid id="testDataGrid" dropEnabled="true">
+                                                <mx:columns>
+                                                        <mx:Array>
+                                                                <mx:DataGridColumn dataField="Album" headerText="Record" />
+                                                                <mx:DataGridColumn dataField="Price" />
+                                                        </mx:Array>
+                                                </mx:columns>
+                                        </mx:DataGrid>
+                                        <!--mx:Button id="addNodeButton" label="addTreeNodeAt" click="testTree.addTreeNodeAt(1, 'Archive', 'archive')" /-->
+                                        <mx:Button id="addNodeButton" label="addTreeNodeAt" click="insertItemInTree()" />
+
+                                </mx:Panel>
+                                <mx:Panel width="50%" height="100%" title="Menus and More" >
+
+                                        <mx:Button id="testMenuButton" label="Create and Show Menu" click="createAndShowMenu()" />
+                                        <mx:HBox width="250">
+                                                <mx:Label text="Menu Choice: " />
+                                                <mx:Label id="testMenuLabel" width="100%" />
+                                        </mx:HBox>
+
+                                        <mx:Image id="testImage" source="smokeImage.jpg" /> 
+
+                                        <mx:SWFLoader id="testLoader" />
+
+                                        <mx:MenuBar id="testMenuBar" width="250" showRoot="false" itemClick="menuChanged(event)" />
+
+                                        <mx:Text id="testText" width="100" creationComplete="initTextComponent()" />
+
+                    <mx:HSlider id="testSlider" width="150" creationComplete="getSliderThumb()"
+                                                                minimum="0" maximum="100" tickInterval="10" snapInterval="1"
+                                                                thumbCount="1" values="[0,100]" labels="[0,100]" liveDragging="true"
+                                                                change="testImage.alpha = (testSlider.values[0] / 100);testProgress.setProgress(Math.floor(testImage.alpha * 100), 100)"/>
+
+                                        <mx:ProgressBar id="testProgress" width="150" label="Image alpha"
+                                                                mode="manual" indeterminate="false" />
+
+
+                                </mx:Panel>
+                        </mx:HBox>
+                </mx:ViewStack>
+    </mx:VBox>
+
+</mx:Application>

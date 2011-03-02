@@ -1,0 +1,151 @@
+Flex 1.5 flexstore is in. 
+//depot/flash/experience/Flex/apps/samples.war/flexstore/
+
+List of 2.0 changes
+
+CartView.mxml
+1. Use new dispatchEvent syntax: dispatchEvent(new Event('checkOut'))
+ 
+CartView_Script.as 
+1. Use new dispatchEvent syntax: dispatchEvent(new Event('checkOut'))
+
+Checkout.mxml
+1. Change id for input text field "name" to cout_name. Conflict when id is "name"
+
+2. Remove unnecessary variable declaration
+
+  - <mx:Script>
+  -     var address:TextInput; 
+  - </mx:Script> 
+
+3. Workaround for bug 125534
+
+    -<mx:VBox xmlns:mx="http://www.macromedia.com/2003/mxml" xmlns="http://www.macromedia.com/2005/flexstore" verticalGap="0" initialize="initComp()">
+    +<mx:VBox xmlns:mx="http://www.macromedia.com/2003/mxml" xmlns="http://www.macromedia.com/2005/flexstore" verticalGap="0" creationPolicy="all" initialize="initComp()">
+
+4. Changed RequiredFieldValidator declarations to Validator. Added required="true" as an attribute to each of these.
+	
+Checkout_script.as
+
+1. Bug 121884 changes
+
+  -var months=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  -var years=[2004, 2005, 2006, 2007, 2008, 2009, 2010];
+
+  +public var months:Array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  +public var years:Array = [2004, 2005, 2006, 2007, 2008, 2009, 2010];
+
+2. Null pointer fix in initComp()
+
+  -    cartData.shippingCost=parseFloat(shippingModel.company[0].rate);
+  +    if (cartData) {
+  +        cartData.shippingCost=parseFloat(shippingModel.company[0].rate);
+  +    }
+
+3. Replaced cartData variable with getter and setter, so the setter
+   can initialize the shippingCost.
+
+CreditCardPicker.mxml 
+
+1. Make the first item in the credit cards combo box come up empty in a way that works.
+    cards.push({label: " "});
+
+flexstore.mxml
+
+1. Change catalog Model to Array, because ThumbnailView expects an
+   Array for it's dataProvider property.
+
+2. Add [Bindable] metadata to catalog Array and add Binding of
+   catalogWS.getList.result to catalog.
+
+3. Use navigateToURL() instead of getURL(). 
+
+4. Added height and width to Application tag.
+
+5. Made cart variable public.
+
+6. Modified Image tag events to no longer assume event.target is the
+   Image and to reference the Image via the tag's id.
+
+7. Replace WebService with Model to remove dependency on a server.
+
+flexstore_script.as
+
+1. Bug 121884 changes
+
+  -var selectedItem;
+  -var currentView="thumb";
+  +public var selectedItem:Object;
+  +public var currentView:String = "thumb";
+
+GridView.mxml 
+1. Use new dispatchEvent syntax: dispatchEvent(new Event('checkOut'))
+
+2. Removed dataObject variable, because UIObject already declares it.
+
+3. Made selectedItem variable public.
+
+4. Added private _dataProvider variable, modified setDataProvider() to set it, and
+   modified list to data bind it's dataProvider to _dataProvider.
+
+ProductDetail.mxml
+1. Change line 35 
+          from: <mx:Label text="{dataObject.price}" styleName="price"/> 
+            to: <mx:Label text="${dataObject.price}" styleName="price"/>
+
+2. Remove dataObject declaration, change dataObject to dataObject.data
+
+ProductThumbnail.mxml
+
+1. Remove Delegate usage from hideWhenChanging() function.
+
+2. Use new effect syntax. Use setStyle to set the mouseOverEffect and mouseOutEffect rather than setting these through the component attributes. When the component attributes were used the effect was out of scope resulting in undefined errors for "big" and "small".   
+
+       function initComponent() {
+            itemImage.setStyle("mouseOverEffect", big);
+            itemImage.setStyle("mouseOutEffect", small);
+        }
+   
+       <mx:Zoom id="big" zoomTo="1.05" duration="500"/>
+       <mx:Zoom id="small" zoomTo="1" duration="500"/>
+
+3. Made _filteredOut variable public.
+
+RequiredFieldValidator.as
+1. Change line 2 
+          from: function doValidation(value) : Void { to 
+            to: override public function doValidation(value) : Void {
+
+ThumbnailView.mxml 
+1. Use new dispatchEvent syntax: dispatchEvent(new Event('checkOut'))
+
+2. Made variables public.
+
+3. Modified filter() to call invalidate on each cell after filteredOut is changed.
+
+ThumbnailView.as
+
+1. TileList api changes
+                from: <mx:TileList id="myTile" dataProvider="{dataObject}" cellRenderer="ProductThumbnail"
+                        width="100%" height="100%" itemWidth="120" itemHeight="116" borderStyle="none"
+                  to: <mx:TileList id="myTile" dataProvider="{dataObject}" listItemRenderer="ProductThumbnail"
+                        width="100%" height="100%" columnWidth="120" columnHeight="116" borderStyle="none"
+
+2. Change dataObject variable to _dataObject, because UIObject already
+   has a dataObject property and add property dataProvider.
+
+ShoppingCart.as
+
+1. Made all functions public.
+
+StatePicker.mxml
+
+1. selectedItem needs [Bindable] metadata
+
+CreditCardPicker.mxml
+
+1. selected Item needs [Bindable] metadata
+
+RequiredFieldValidator.as
+
+1. Deleted the file. It performs the same functionality as a Validator with the required attribute set to true. 

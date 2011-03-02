@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flexLibProperties version="1">
+<includeClasses>
+<classEntry path="AIRFrameworkClasses"/>
+</includeClasses>
+<includeResources>
+<resourceEntry destPath="mac_min_up.png" sourcePath="../assets/mac_min_up.png"/>
+<resourceEntry destPath="win_max_dis.png" sourcePath="../assets/win_max_dis.png"/>
+<resourceEntry destPath="mac_max_dis.png" sourcePath="../assets/mac_max_dis.png"/>
+<resourceEntry destPath="win_min_up.png" sourcePath="../assets/win_min_up.png"/>
+<resourceEntry destPath="win_max_up.png" sourcePath="../assets/win_max_up.png"/>
+<resourceEntry destPath="win_restore_over.png" sourcePath="../assets/win_restore_over.png"/>
+<resourceEntry destPath="mac_close_over.png" sourcePath="../assets/mac_close_over.png"/>
+<resourceEntry destPath="win_min_dis.png" sourcePath="../assets/win_min_dis.png"/>
+<resourceEntry destPath="win_close_over.png" sourcePath="../assets/win_close_over.png"/>
+<resourceEntry destPath="win_close_up.png" sourcePath="../assets/win_close_up.png"/>
+<resourceEntry destPath="mac_min_dis.png" sourcePath="../assets/mac_min_dis.png"/>
+<resourceEntry destPath="win_close_down.png" sourcePath="../assets/win_close_down.png"/>
+<resourceEntry destPath="win_restore_up.png" sourcePath="../assets/win_restore_up.png"/>
+<resourceEntry destPath="win_min_over.png" sourcePath="../assets/win_min_over.png"/>
+<resourceEntry destPath="gripper_up.png" sourcePath="../assets/gripper_up.png"/>
+<resourceEntry destPath="win_max_down.png" sourcePath="../assets/win_max_down.png"/>
+<resourceEntry destPath="win_restore_down.png" sourcePath="../assets/win_restore_down.png"/>
+<resourceEntry destPath="mac_max_over.png" sourcePath="../assets/mac_max_over.png"/>
+<resourceEntry destPath="mac_max_up.png" sourcePath="../assets/mac_max_up.png"/>
+<resourceEntry destPath="mac_close_up.png" sourcePath="../assets/mac_close_up.png"/>
+<resourceEntry destPath="Assets.swf" sourcePath="../assets/Assets.swf"/>
+<resourceEntry destPath="win_max_over.png" sourcePath="../assets/win_max_over.png"/>
+<resourceEntry destPath="mac_close_down.png" sourcePath="../assets/mac_close_down.png"/>
+<resourceEntry destPath="defaults.css" sourcePath="../defaults.css"/>
+<resourceEntry destPath="mac_max_down.png" sourcePath="../assets/mac_max_down.png"/>
+<resourceEntry destPath="ComputerIcon.swf" sourcePath="../assets/ComputerIcon.swf"/>
+<resourceEntry destPath="win_min_down.png" sourcePath="../assets/win_min_down.png"/>
+<resourceEntry destPath="mac_min_down.png" sourcePath="../assets/mac_min_down.png"/>
+<resourceEntry destPath="mac_min_over.png" sourcePath="../assets/mac_min_over.png"/>
+</includeResources>
+<namespaceManifests>
+<namespaceManifestEntry manifest="../manifest.xml" namespace="http://www.adobe.com/2006/mxml"/>
+</namespaceManifests>
+</flexLibProperties>

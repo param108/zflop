@@ -1,0 +1,43 @@
+################################################################################
+##
+##  ADOBE SYSTEMS INCORPORATED
+##  Copyright 2007 Adobe Systems Incorporated
+##  All Rights Reserved.
+##
+##  NOTICE: Adobe permits you to use, modify, and distribute this file
+##  in accordance with the terms of the license agreement accompanying it.
+##
+################################################################################
+
+#**
+ *
+ *  embedText: write $text into current output, after registering line mapping to context
+ *
+ *  Note: these line mappings are permanent (they're written to the bytecode as well as
+ *  being used for compile errors).  for compile-error only mappings, see next
+ *
+ *#
+## commented version emits line numbers as comments in the generated code. When using, be sure to uncomment the second (blank) line.
+###macro (embedText $text $origLine)#if ($origLine > 0)$util.mapLines($origLine, $text)/*$origLine>*/#end$text#if ($origLine > 0)/*<$origLine*/
+#macro (embedText $text $origLine)#if ($origLine > 0)$util.mapLines($origLine, $text)#end$text
+#end
+
+package
+{
+##
+## imports
+##
+#foreach ($import in $styleModule.imports)
+#embedText("import $import.value;" $import.lineNumber)
+#end
+
+[ExcludeClass]
+public class ${styleModule.name}
+{
+#foreach ($import in $styleModule.imports)
+    $import.value;
+#end
+
+}
+
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:ComboBox xmlns:mx="http://www.adobe.com/2006/mxml"
+			 labelField="label" creationComplete="initCards()">
+
+    <mx:Script>
+	<![CDATA[
+
+        import mx.validators.CreditCardValidatorCardType;
+
+        [Bindable]
+        public var cards:Array;
+
+        private function initCards():void
+		{
+            cards = 
+			[
+				{ label: " " },
+				{ label: "Visa", data: CreditCardValidatorCardType.VISA },
+				{ label: "MasterCard", data: CreditCardValidatorCardType.MASTER_CARD },
+				{ label: "American Express", data: CreditCardValidatorCardType.AMERICAN_EXPRESS },
+				{ label: "Discover", data: CreditCardValidatorCardType.DISCOVER },
+				{ label: "Diners Club", data: CreditCardValidatorCardType.DINERS_CLUB }
+			];
+			
+			dataProvider = cards;
+            selectedIndex=1;
+        }
+
+	]]>
+    </mx:Script>
+
+</mx:ComboBox>

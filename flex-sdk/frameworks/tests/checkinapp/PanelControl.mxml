@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:HBox  xmlns:mx="http://www.adobe.com/2006/mxml"
+    horizontalAlign="right" y="8" horizontalGap="4">
+
+    <mx:Script>
+        public function set selected(view:String):void {
+            if (view=="small") {
+                sm.setStyle("backgroundColor","#999999");
+                m.setStyle("backgroundColor","#333333");
+                l.setStyle("backgroundColor","#333333");
+            } else if (view=="large") {
+                sm.setStyle("backgroundColor","#333333");
+                m.setStyle("backgroundColor","#333333");
+                l.setStyle("backgroundColor","#999999");
+            } else {
+                sm.setStyle("backgroundColor","#333333");
+                m.setStyle("backgroundColor","#999999");
+                l.setStyle("backgroundColor","#333333");
+            }
+        }
+        
+        public function dispatchResizePanelEvent(type:String):void
+        {
+            dispatchEvent(new ResizePanelEvent(type));
+        }
+    </mx:Script>
+
+    <mx:Metadata>
+        [Event(name="resizeEvent", type="ResizePanelEvent")]
+    </mx:Metadata>
+
+    <mx:Canvas width="10" height="10" 
+               mouseDown="dispatchResizePanelEvent('small')">
+        <mx:Image source="@Embed('assets/images/transparent.gif')" width="10" height="10"/>
+        <mx:Canvas id="sm" backgroundColor="#333333" y="7" width="10" height="3"/>
+    </mx:Canvas>
+
+    <mx:Canvas width="10" height="10" 
+               mouseDown="dispatchResizePanelEvent('medium')">
+        <mx:Image source="@Embed('assets/images/transparent.gif')" width="10" height="10"/>
+        <mx:Canvas id="m" backgroundColor="#999999" width="10" y="3" height="7"/>
+        <mx:Canvas backgroundColor="#FFFFFF" x="1" y="6" width="8" height="3"/>
+    </mx:Canvas>
+
+    <mx:Canvas mouseDown="dispatchResizePanelEvent('large')">
+        <mx:Canvas id="l" backgroundColor="#333333" width="10" height="10"/>
+        <mx:Canvas backgroundColor="#FFFFFF" x="1" y="3" width="8" height="6"/>
+    </mx:Canvas>
+
+    <mx:Spacer width="6"/>
+
+</mx:HBox>

@@ -1,0 +1,132 @@
+/*
+////////////////////////////////////////////////////////////////////////////////
+//
+//  ADOBE SYSTEMS INCORPORATED
+//  Copyright 2006 Adobe Systems Incorporated
+//  All Rights Reserved.
+//
+//  NOTICE: Adobe permits you to use, modify, and distribute this file
+//  in accordance with the terms of the license agreement accompanying it.
+//
+////////////////////////////////////////////////////////////////////////////////
+*/
+
+global {
+	font-family:"Verdana";
+	font-size:11px;
+	color:#666666;
+}
+
+Panel {
+	header-colors:#FFFFFF,#E6EBF0;
+	footer-colors:#FFFFFF,#E6EBF0;
+	corner-radius:6;
+	margin-top:0;
+	margin-left:0;
+	margin-right:0;
+	margin-bottom:0;
+}
+
+Application {
+	theme-color:#FFCC00;
+	background-image:"backgrounds/institutional.swf";
+	background-size:"100%";
+	background-color:#EEEEEE;
+}
+
+Alert {
+	header-colors:#FFFFFF,#E6EBF0;
+	corner-radius:6;	
+	background-color:#FFFFFF;
+}
+
+appTitleInstitutional {
+	font-family:"Georgia";
+	font-weight: "bold";
+	font-size:18px;
+	color:#999999;
+	margin-left: 8;
+}
+
+Accordion {
+	font-size:9;
+	font-weight: "normal";
+	fill-colors: #FFFFFF,#E6EBF0;
+	selected-fill-colors: #FFFFFF,#E6EBF0;
+	background-color: #F0F3F6;
+	border-style:"none";
+	border-color:#FFFFFF;
+	margin-top: -9;
+}
+
+Button {
+	color: #666666;
+	text-roll-over-color: #666666;
+	font-size: 9px;
+	font-weight: "bold";
+	fill-colors: #FFFFFF,#E6EBF0;
+	corner-radius: 6;
+	border-color: #FFCC00;
+}
+
+CheckBox {
+	fill-colors: #FFFFFF,#E6EBF0;
+	border-color: #CCCCCC;
+}
+
+ComboBox {
+	color: #666666;
+	text-roll-over-color: #666666;
+	font-size: 9px;
+	font-weight: "bold";
+	fill-colors: #FFFFFF,#E6EBF0;
+	corner-radius: 6;
+	border-color: #CCCCCC;
+}
+
+DataGrid {
+	alternating-row-colors:#F0F3F6,#F0F3F6;
+	border-style:"none";
+	header-color:#E6EBF0;
+	v-grid-lines:false;
+	h-grid-lines: true;
+	h-grid-line-color: #FFFFFF;
+	textIndent:4;
+}
+
+NumericStepper {	
+	fill-colors: #FFFFFF,#E6EBF0;
+	corner-radius: 6;
+	border-color: #CCCCCC;
+}
+
+RadioButton {
+	fill-colors: #FFFFFF,#E6EBF0;
+	border-color: #CCCCCC;
+}
+
+ScrollBar {
+	fill-colors: #FFFFFF, #D8E5F2;
+	border-color: #AAAAAA;
+	corner-radius: 3;
+	track-colors: #CCCCCC, #E6EBF0;
+}
+
+HSlider {
+	fill-colors: #FFFFFF, #D8E5F2;
+	track-colors: #FFFFFF, #FFFFFF;
+	border-color: #CCCCCC;
+	tick-color: #BBBBBB;
+	tick-offset: -1;
+	show-track-highlight: false;
+	label-offset: -3;
+}
+
+TextInput {
+	font-weight: "normal";
+	color: #333333;
+}
+
+TileList {
+	font-size:9px;
+}

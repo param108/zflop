@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- A custom component that displays the content of a shopping cart. -->
+
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml"
+    title="Shopping Cart">
+
+    <!-- The ActionScript code for this class is externalized in a separate .as file for better readability -->
+    <mx:Script source="CartView_script.as"/>
+
+    <mx:Metadata>
+        [Event("itemSelected")]
+        [Event("checkOut")]
+    </mx:Metadata>
+
+    <mx:NumberFormatter id="price"
+        precision="2"
+        rounding="none"
+        decimalSeparatorTo="."
+        thousandsSeparatorTo=","
+        useThousandsSeparator="true"/>
+
+    <mx:DataGrid id="dg"
+        change="dataGridChange( DataGrid(event.target).selectedItem )"
+        width="100%"
+        height="100%"
+		dropEnabled="true"
+		dragEnter="doDragEnter(event)"
+		dragOver="doDragOver(event)"
+        dragDrop="doDragDrop(event)">
+        <mx:columns>
+            <mx:Array>
+                <mx:DataGridColumn dataField="name" headerText="Name" width="180"/>
+                <mx:DataGridColumn dataField="qty"  headerText="Qty" width="50" textAlign="right" paddingRight="4"/>
+                <mx:DataGridColumn dataField="price" headerText="Price" width="60" textAlign="right" paddingRight="4"/>
+            </mx:Array>
+        </mx:columns>
+    </mx:DataGrid>
+
+    <mx:ControlBar id="ctrl" height="50">
+        <mx:Button label="Delete" enabled="{selectedItem!=null}" width="78" click="removeItem()"/>
+        <mx:Button label="Checkout" width="78" enabled="{_cartItems.total!=0}" click="dispatchEvent(new Event('checkOut'))"/>
+        <mx:Label styleName="price" text="Total: ${price.format(_cartItems.total)}"/>
+    </mx:ControlBar>
+
+</mx:Panel>

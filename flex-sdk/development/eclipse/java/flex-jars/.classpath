@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/xalan.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/afe.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/asc.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/batik_ja.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/batik-all-flex.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/commons-collections.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/commons-discovery.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/commons-logging.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/flex-messaging-common.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/javacc.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/mm-velocity-1.4.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/xercesImpl_ja.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/xercesImpl.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/xercesPatch.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/xmlParserAPIs.jar"/>
+	<classpathentry exported="true" kind="var" path="FLEX_SDK/lib/aglj32.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

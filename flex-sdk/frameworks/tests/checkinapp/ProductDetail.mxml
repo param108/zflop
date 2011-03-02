@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- A custom component that displays details for a specific product provided using the data attribute-->
+
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml"
+    title="Product Details"
+    paddingTop="8"
+    paddingBottom="8"
+    paddingLeft="8"
+    paddingRight="8"
+    creationComplete="initComponent()">
+
+    <mx:Script>
+    <![CDATA[
+
+		import mx.core.Application;
+        import mx.core.DragSource;
+		import mx.managers.DragManager;
+		import ProductThumbnail;
+		
+		[Bindable]
+        public var item:Object;
+
+        public var shoppingCart:ShoppingCart;
+
+        // The user can drag the product image and drop it in the shopping cart
+        private function beginDrag(event:MouseEvent):void
+		{
+            var ds:DragSource = new DragSource();
+            ds.addData(item, "item");
+            var di:ProductThumbnail = new ProductThumbnail();
+            di.data = item;
+            DragManager.doDrag(this, ds, event, di, 16 - mouseX, -mouseY, 0.5, false);
+            big.end();
+			small.play();
+        }
+
+        private function initComponent():void
+		{
+            itemImage.setStyle("rollOverEffect", big);
+            itemImage.setStyle("rollOutEffect", small);
+        }
+
+    ]]>
+    </mx:Script>
+
+    <mx:Zoom id="big" zoomWidthTo="1.02" zoomHeightTo="1.02" duration="500"/>
+    <mx:Zoom id="small" zoomWidthTo="1" zoomHeightTo="1" duration="500"/>
+
+    <mx:HBox verticalAlign="middle">
+        <mx:Canvas clipContent="false" width="150" height="140">
+            <mx:Image id="itemImage" source="{item.image}" width="150" height="140" mouseDown="beginDrag(event)"/>
+        </mx:Canvas>
+        <mx:VBox>
+            <mx:Label text="{item.name}" styleName="title"/>
+            <mx:Label text="${item.price}" styleName="price"/>
+        </mx:VBox>
+    </mx:HBox>
+
+    <mx:Text width="100%" height="100%" text="{item.description}"/>
+
+    <mx:ControlBar id="ctrl">
+        <mx:Label text="Quantity"/>
+        <mx:NumericStepper id="qty" minimum="1" maximum="100" stepSize="1" value="1" width="40"/>
+        <mx:Button label="Add to Cart" click="shoppingCart.addItem(item, qty.value);qty.value=1;Application.application.cartView.cartItems=shoppingCart"/>
+    </mx:ControlBar>
+
+</mx:Panel>

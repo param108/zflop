@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<library>  
+  <namespace uri="http://www.macromedia.com/2003/mxml">
+    <component name="ComboBox" />
+    <component name="Application" />
+    <component name="HBox" />
+    <component name="Panel" />
+    <component name="ViewStack" />
+    <component name="Canvas" />
+    <component name="Button" />
+    <component name="Label" />
+    <component name="Image" />
+    <component name="Link" />
+    <component name="HSlider" />
+    <component name="Spacer" />
+    <component name="ControlBar" />
+    <component name="Fade" />
+    <component name="ZipCodeValidator" />
+    <component name="GridItem" />
+    <component name="Text" />
+    <component name="Grid" />
+    <component name="Form" />
+    <component name="DataGridColumn" />
+    <component name="TextInput" />
+    <component name="RadioButton" />
+    <component name="Accordion" />
+    <component name="Repeater" />
+    <component name="NumericStepper" />
+    <component name="EmailValidator" />
+    <component name="Tile" />
+    <component name="ZipCodeValidator" />
+    <component name="WebService" />
+    <component name="Resize" />
+  </namespace>
+</library> 

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" verticalGap="0" creationComplete="run()" >
+
+
+    <mx:TextArea id="useProxyIsFalseOutput" height="100" width="100" visible="true"/>
+    
+	<!-- without proxy -->
+    <mx:HTTPService id="hs" 
+        method="get"
+	destination="echoParams_http"
+        useProxy="true" 
+        resultFormat="xml"
+        result="onServiceResult(event)"
+        fault="onServiceFault(event)" />
+
+
+	<mx:Script>
+	<![CDATA[
+		import mx.rpc.events.*;
+		import mx.controls.Alert;
+
+		private var typeNoProxy:String;
+		private var typeProxy:String;
+
+        private function onServiceResult(event:ResultEvent):void
+		{
+            typeNoProxy = event.type;
+            useProxyIsFalseOutput.text = typeNoProxy;
+        }
+
+        private function onServiceFault(event:FaultEvent):void
+		{
+            typeNoProxy = event.type;
+            useProxyIsFalseOutput.text = typeNoProxy;
+		trace("error: " + event.fault.faultString);
+        }
+
+ 	    
+        private function run():void
+		{
+			hs.send();
+
+        }
+
+    ]]>
+    </mx:Script>
+
+</mx:VBox>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Model id="statesModel" source="data/states.xml"/>
+
+    <mx:Script>
+        [Bindable]
+        public var selectedItem:Object = {};
+    </mx:Script>
+
+    <mx:ComboBox dataProvider="{statesModel.state}" labelField="name" width="{this.width}"
+        change="this.selectedItem = ComboBox(event.target).selectedItem" prompt="Choose a state..."/>
+
+</mx:Canvas>

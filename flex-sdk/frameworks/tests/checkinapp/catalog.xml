@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2006 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<catalog>
+
+    <product id="1">
+        <name>USB Watch</name>
+        <description>So, you need to tell the time of course, but you also need a way to carry your valuable data with you at all times (you know - your MP3 files, favorite images, your ThinkGeek shopping list). This watch can handle the mission for you and do it in style. It can store up to 256 Megs of data.</description>
+        <price>129.99</price>
+        <image>assets/products/usbwatch.jpg</image>
+        <thumbnail>assets/products/usbwatch_sm.jpg</thumbnail>
+    </product>
+
+    <product id="2">
+        <name>007 Digital Camera</name>
+        <description>There is finally a hi-tech gadget from Q's laboratory that can be had by the measly (albeit smart) masses who are not fortunate enough to carry a license to kill. This inconspicuous Zippo look-alike actually contains a digital camera capable of holding over 300 images.</description>
+        <price>99.99</price>
+        <image>assets/products/007camera.jpg</image>
+        <thumbnail>assets/products/007camera_sm.jpg</thumbnail>
+    </product>
+
+    <product id="3">
+        <name>2-Way Radio Watch</name>
+        <description>The only wristwatch with a 2-way radio available to date. It features a built-in 22-channel FRS walkie talkie with a 1.5-mile range. The voice-activated feature allows you to speak into the microphone and your words will be beamed directly to the speaker of any other FRS walkie talkie user.</description>
+        <price>49.99</price>
+        <image>assets/products/radiowatch.jpg</image>
+        <thumbnail>assets/products/radiowatch_sm.jpg</thumbnail>
+    </product>
+
+    <product id="4">
+        <name>USB Desk Fan</name>
+        <description>Some people are addicted to fans. They have one running when they sleep (the background noise can be soothing) and they have one on their desk at all times. Other people just like to have a little moving air. Whether you are a fan addict or just a casual user, we have just the device for you.</description>
+        <price>19.99</price>
+        <image>assets/products/usbfan.jpg</image>
+        <thumbnail>assets/products/usbfan_sm.jpg</thumbnail>
+    </product>
+
+    <product id="5">
+        <name>Caffeinated Soap</name>
+        <description>Tired of waking up and having to wait for your morning java to brew? Are you one of those groggy early morning types that just needs that extra kick? Introducing Shower Shock, the original and world's first caffeinated soap. When you think about it, ShowerShock is the ultimate clean buzz ;)</description>
+        <price>19.99</price>
+        <image>assets/products/soap.jpg</image>
+        <thumbnail>assets/products/soap_sm.jpg</thumbnail>
+    </product>
+
+    <product id="6">
+        <name>Desktop Rovers</name>
+        <description>Inspired by NASA's planetary exploration program, this miniature 'caterpillar drive' rover belongs officially in the 'way too cool' category. These mini remote controlled desktop rovers with tank treads are only 4 inches long and ready to explore the "Alien Landscapes" around your home or office.</description>
+        <price>49.99</price>
+        <image>assets/products/rover.jpg</image>
+        <thumbnail>assets/products/rover_sm.jpg</thumbnail>
+    </product>
+
+    <product id="7">
+        <name>PC Volume Knob</name>
+        <description>The coolest volume knob your computer has ever seen and so much more. Use it to edit home movies or scroll through long documents and web pages. Program it to do anything you want in any application. Customize it to your own needs and get wild.</description>
+        <price>34.99</price>
+        <image>assets/products/volume.jpg</image>
+        <thumbnail>assets/products/volume_sm.jpg</thumbnail>
+    </product>
+
+    <product id="8">
+        <name>Wireless Antenna</name>
+        <description>A Cantenna is simply an inexpensive version of the long-range antennas used by wireless internet providers and mobile phone companies. Now, with your own Cantenna you can extend the range of your wireless network or connect to other wireless networks in your neighborhood.</description>
+        <price>49.99</price>
+        <image>assets/products/cantena.jpg</image>
+        <thumbnail>assets/products/cantena_sm.jpg</thumbnail>
+    </product>
+
+    <product id="9">
+        <name>TrackerPod</name>
+        <description>TrackerPod is a small robotic tripod on which you mount a webcam, and TrackerCam is Artificial Intelligence software to control camera movement from your computer. Together they perform the function of a robotic camera-man for your webcam.</description>
+        <price>129.99</price>
+        <image>assets/products/trackerpod.jpg</image>
+        <thumbnail>assets/products/trackerpod_sm.jpg</thumbnail>
+    </product>
+
+    <product id="10">
+        <name>Caffeinated Sauce</name>
+        <description>After months of sleepless nights, we finally came up with something we could bottle up and sell to the masses. A hot sauce (extremely hot btw) that tastes great and has caffeine in it!</description>
+        <price>6.99</price>
+        <image>assets/products/hotsauce.jpg</image>
+        <thumbnail>assets/products/hotsauce_sm.jpg</thumbnail>
+    </product>
+
+    <product id="11">
+        <name>Thinking Putty</name>
+        <description>The Ultimate Stress Reduction office toy is here. Of course you remember playing with putty as a kid. Welp, this aint your kids putty. Adult sized, and as feature-rich as your favorite Operating System, the Smart Mass putty from ThinkGeek makes living life fun all over again.</description>
+        <price>11.99</price>
+        <image>assets/products/putty.jpg</image>
+        <thumbnail>assets/products/putty_sm.jpg</thumbnail>
+    </product>
+
+    <product id="12">
+        <name>Ambient Orb</name>
+        <description>The Ambient Orb is a device that slowly transitions between thousands of colors to show changes in the weather, the health of your stock portfolio, or if your boss or friend is on instant messenger. It is a simple wireless object that unobtrusively presents information.</description>
+        <price>149.99</price>
+        <image>assets/products/orb.jpg</image>
+        <thumbnail>assets/products/orb_sm.jpg</thumbnail>
+    </product>
+
+    <product id="13">
+        <name>USB Microscope</name>
+        <description>The USB connected Computer Microscope allows you to turn the ordinary into the extraordinary for hours of fun and learning. View specimens collected around the house, backyard, your desk, or the fridge. Look at the micro-printing on a dollar bill or examine the traces on your motherboard.</description>
+        <price>54.99</price>
+        <image>assets/products/microscope.jpg</image>
+        <thumbnail>assets/products/microscope_sm.jpg</thumbnail>
+    </product>
+
+    <product id="14">
+        <name>Flying Saucer</name>
+        <description>The flying saucer is surpisingly quiet during operation and so sneaking up on your fellow co-workers is quite easy. The multi-controller Transmitter modulates the thrust from each propeller independently allowing you to take off and land vertically, spin in place, and fly in all directions!</description>
+        <price>69.99</price>
+        <image>assets/products/ufo.jpg</image>
+        <thumbnail>assets/products/ufo_sm.jpg</thumbnail>
+    </product>
+
+    <product id="15">
+        <name>Levitating Globe</name>
+        <description>These electromagnetic suspended globes are actually high-tech instruments. A magnetic field sensor permanently measures the height at which the globes are suspended. This sensor feeds that data into a micro computer in the base of the unit.</description>
+        <price>89.99</price>
+        <image>assets/products/globe.jpg</image>
+        <thumbnail>assets/products/globe_sm.jpg</thumbnail>
+    </product>
+
+    <product id="16">
+        <name>Personal Robot</name>
+        <description>The ER1 is the first robot with professional-level robotics software technologies and industrial-grade hardware designed for enthusiasts, like you, who are interested in technology that takes advantage of your technical skills and your imagination.</description>
+        <price>139.99</price>
+        <image>assets/products/robot.jpg</image>
+        <thumbnail>assets/products/robot_sm.jpg</thumbnail>
+    </product>
+
+</catalog>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2006 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<shipping>
+    <company name="US Mail (3-7 business days)" rate="5.99"/>
+    <company name="UPS (2 business days)" rate="12.99"/>
+    <company name="FedEx (Overnight Priority)" rate="18.99"/>
+</shipping>

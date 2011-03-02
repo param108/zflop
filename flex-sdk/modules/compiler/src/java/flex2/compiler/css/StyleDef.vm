@@ -1,0 +1,79 @@
+################################################################################
+##
+##  ADOBE SYSTEMS INCORPORATED
+##  Copyright 2005-2006 Adobe Systems Incorporated
+##  All Rights Reserved.
+##
+##  NOTICE: Adobe permits you to use, modify, and distribute this file
+##  in accordance with the terms of the license agreement accompanying it.
+##
+################################################################################
+
+package 
+{
+
+import flash.display.Sprite;
+import mx.core.IFlexModuleFactory;
+import mx.core.mx_internal;
+import mx.styles.CSSStyleDeclaration;
+import mx.styles.StyleManager;
+##
+## imports
+##
+#foreach ($import in $styleDef.imports)
+import $import.value;
+#end
+
+[ExcludeClass]
+
+public class _${styleDef.typeName}Style
+{
+##
+## @Embeds
+##
+#foreach ($atEmbed in $styleDef.atEmbeds)
+    [Embed(#set ($vals = $atEmbed.getAttributes())#foreach( $key in $vals.keySet() )#if ($velocityCount > 1), #end#set ($val = $vals.get($key))$key='$val'#end)]
+    private static var $atEmbed.propName:$atEmbed.type;
+#end
+
+    public static function init(fbs:IFlexModuleFactory):void
+    {
+#if ($styleDef.isTypeSelector())
+        var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration("${styleDef.typeName}");
+#else
+        var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration(".${styleDef.typeName}");
+#end
+    
+        if (!style)
+        {
+            style = new CSSStyleDeclaration();
+#if ($styleDef.isTypeSelector() || $styleDef.name == "global")
+            StyleManager.setStyleDeclaration("${styleDef.typeName}", style, false);
+#else
+            StyleManager.setStyleDeclaration(".${styleDef.typeName}", style, false);
+#end
+#if ($styleDef.effectStyles.size() > 0)
+            var effects:Array = style.mx_internal::effects;
+            if (!effects)
+            {
+                effects = style.mx_internal::effects = new Array();
+            }
+#foreach ($effectStyle in $styleDef.effectStyles)
+            effects.push("${effectStyle}");
+#end
+#end
+        }
+    
+        if (style.defaultFactory == null)
+        {
+            style.defaultFactory = function():void
+            {
+#foreach ($style in $styleDef.styles)
+                this.${style.name} = ${style.value};
+#end
+            };
+        }
+    }
+}
+
+}

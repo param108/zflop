@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" verticalGap="0" creationComplete="run()" >
+
+    <mx:TextArea id="output" height="100" width="100" visible="true"/>
+
+    <mx:RemoteObject destination="qa.amf.echoservice.Echo" id="amfRemote">
+        <mx:method name="echoDate" result="onResult(expectDate1.toString(),event.result.toString())" 
+            fault="onFault(event)">
+        </mx:method>
+    </mx:RemoteObject>
+    <mx:Script>
+    <![CDATA[
+        import mx.rpc.events.FaultEvent;
+        import mx.events.ResizeEvent;
+        private var expectDate1:Date ;
+        private var expectDate2:Date ;
+        private  function run():void {
+            expectDate1 = new Date();
+            expectDate2 = new Date(1999,2,3);
+            amfRemote.echoDate(expectDate1);
+            amfRemote.echoDates([expectDate1,expectDate2]);
+        }
+        private function onResult(expected:String,result:String):void
+        {
+            if (expected == result)
+            {
+                output.text = "TEST PASSED";
+            }
+            else
+            {
+                //diffs will cause test to fail
+                output.text = "TEST FAILED";
+                trace("TEST FAILED");
+            }
+        }
+        private function onFault(event:FaultEvent):void
+        {
+            //any invocation fault will cause test to fail
+            output.text = "-> Error: " + event.fault.faultString;
+            trace("-> Error: " + event.fault.faultString);
+        }
+    ]]>
+    </mx:Script>
+</mx:VBox>

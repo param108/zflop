@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- A custom component that provides the user interface for checking out -->
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" verticalGap="0" creationComplete="cartData.shippingCost=parseFloat(shippingModel.company[0].rate);" creationPolicy="all">
+
+    <mx:Script source="Checkout_script.as"/>
+
+    <mx:NumberFormatter id="price"
+        precision="2"
+        rounding="none"
+        decimalSeparatorTo="."
+        thousandsSeparatorTo=","
+        useThousandsSeparator="true"
+        useNegativeSign="true"/>
+
+    <mx:Model id="shippingModel" source="data/shipping.xml"/>
+
+    <mx:Validator id="nameValidator" required="true" source="{cout_name}" property="text"/>
+    <mx:Validator id="addressValidator" required="true" source="{address}" property="text"/>
+    <mx:Validator id="cityValidator" required="true" source="{city}" property="text"/>
+    <mx:Validator id="stateValidator" required="true" source="{state.selectedItem}" property="data" listener="{state}"/>
+	<mx:Validator id="cardHolderValidator" required="true" source="{cardHolder}" property="text"/>
+	<mx:Validator id="cardExpMonthValidator" required="true" source="{cardExpMonth}" property="selectedItem"/>
+	<mx:Validator id="cardExpYearValidator" required="true" source="{cardExpYear}" property="selectedItem"/>
+	<mx:CreditCardValidator id="creditCardValidator" cardTypeSource="{cardType.selectedItem}" cardTypeProperty="data"
+													 cardTypeListener="{cardType}"
+													 cardNumberSource="{cardNumber}" cardNumberProperty="text"/>
+    <mx:ZipCodeValidator id="zipCodeValidator" source="{zip}" property="text"/>
+    <mx:EmailValidator id="emailValidator" source="{email}" property="text"/>
+
+    <mx:VBox backgroundColor="#FFFFFF" width="100%" height="100%" verticalGap="10" paddingTop="10" paddingBottom="20">
+
+        <mx:Accordion id="accordion" width="100%" height="100%">
+
+            <mx:VBox width="100%" height="100%" label="General Information">
+
+                <mx:Form>
+
+                    <mx:FormItem label="Name" required="true">
+                        <mx:TextInput id="cout_name" width="200" text="Todd English"/>
+                    </mx:FormItem>
+
+                    <mx:FormItem label="Address" required="true">
+                        <mx:TextInput id="address" width="200" text="10 City Square"/>
+                    </mx:FormItem>
+
+                    <mx:FormItem label="City" required="true">
+                        <mx:TextInput id="city" width="200" text="Charlestown"/>
+                    </mx:FormItem>
+
+                    <mx:FormItem label="State" required="true">
+                        <StatePicker id="state" width="200"/>
+                    </mx:FormItem>
+
+                    <mx:FormItem label="Zip" required="true">
+                        <mx:TextInput id="zip" width="100" text="02129"/>
+                    </mx:FormItem>
+
+                    <mx:FormItem label="Email" required="true">
+                        <mx:TextInput id="email" width="200" text="todd.english@olives.com"/>
+                    </mx:FormItem>
+
+                    <mx:FormItem required="false">
+                        <mx:CheckBox id="offers" label="Notify me of new products and services at Flex Store."/>
+                    </mx:FormItem>
+
+                </mx:Form>
+
+                <mx:VBox width="100%" height="100%" verticalAlign="bottom" horizontalAlign="right" paddingRight="16" paddingBottom="16">
+                    <mx:Button label="Continue" click="accordion.selectedIndex=1"/>
+                </mx:VBox>
+
+            </mx:VBox>
+
+            <mx:VBox width="100%" height="100%" label="Shipping Information">
+
+                <mx:Form>
+
+                    <mx:FormItem >
+                        <mx:RadioButtonGroup id="shippingButtons" selectedValue="5.99"/>
+                        <mx:Repeater id="shippingList" dataProvider="{shippingModel.company}">
+                            <mx:RadioButton id="rbOption" groupName="shippingButtons"
+                                label="{shippingList.currentItem.name}"
+                                value="{parseFloat(shippingList.currentItem.rate)}"
+                                click="cartData.shippingCost = RadioButton(event.currentTarget).value as Number"/>
+                        </mx:Repeater>
+
+                    </mx:FormItem>
+
+                </mx:Form>
+
+                <mx:VBox width="100%" height="100%" verticalAlign="bottom" horizontalAlign="right" paddingRight="16" paddingBottom="16">
+                    <mx:Button label="Continue" click="accordion.selectedIndex=2"/>
+                </mx:VBox>
+
+            </mx:VBox>
+
+            <mx:VBox width="100%" height="100%" label="Payment Information">
+
+                <mx:Form>
+
+                    <mx:FormItem label="Card Type" required="true">
+                        <CreditCardPicker id="cardType" width="140"/>
+                    </mx:FormItem>
+
+                    <mx:FormItem label="Credit Card" required="true">
+                        <mx:TextInput id="cardNumber" width="200" text="4111111111111111"/>
+                    </mx:FormItem>
+
+                    <mx:FormItem label="Holder Name" required="true">
+                        <mx:TextInput id="cardHolder" width="200" text="Todd English"/>
+                    </mx:FormItem>
+
+                    <mx:FormItem label="Expiration Month" required="true">
+                        <mx:ComboBox id="cardExpMonth" width="65" dataProvider="{months}" selectedIndex="4"/>
+                    </mx:FormItem>
+
+                    <mx:FormItem label="Expiration Year" required="true">
+                        <mx:ComboBox id="cardExpYear" width="65" dataProvider="{years}" selectedIndex="3"/>
+                    </mx:FormItem>
+
+                </mx:Form>
+
+            </mx:VBox>
+
+        </mx:Accordion>
+
+        <mx:Grid width="100%" verticalGap="0" id="orderSummary">
+
+            <mx:GridRow>
+                <mx:GridItem colSpan="2">
+                    <mx:Label text="Order Summary" styleName="title"/>
+                </mx:GridItem>
+            </mx:GridRow>
+
+            <mx:GridRow>
+                <mx:GridItem><mx:Label text="Order Total:"/></mx:GridItem>
+                <mx:GridItem horizontalAlign="right"><mx:Label text="${price.format(cartData.total)}"/></mx:GridItem>
+            </mx:GridRow>
+
+            <mx:GridRow>
+                <mx:GridItem><mx:Label text="Shipping and Handling:"/></mx:GridItem>
+                <mx:GridItem horizontalAlign="right">
+<!--                    <mx:Label><mx:text>${price.format(cartData.shippingCost)}</mx:text></mx:Label>-->
+                    <mx:Label><mx:text>${cartData.shippingCost}</mx:text></mx:Label>
+                </mx:GridItem>
+            </mx:GridRow>
+
+            <mx:GridRow>
+                <mx:GridItem><mx:Label text="Grand Total:" styleName="price"/></mx:GridItem>
+                <mx:GridItem horizontalAlign="right"><mx:Label text="${price.format(cartData.total+cartData.shippingCost)}" styleName="price"/></mx:GridItem>
+            </mx:GridRow>
+
+        </mx:Grid>
+
+    </mx:VBox>
+
+</mx:VBox>

@@ -1,0 +1,285 @@
+<?xml version="1.0"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2005-2007 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<project name="compiler" default="main" basedir="../..">
+
+    <!-- properties -->
+    <property file="${basedir}/build.properties"/>
+
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="module.dir" value="${basedir}/modules/compiler"/>
+	<property name="javac.src" value="1.4"/>    
+    <property name="templates.dir" value="${basedir}/asdoc/templates"/>	
+    <property name="module.src" value="${module.dir}/src/java"/>
+	<property name="module.java15.src" value="${module.dir}/src/java15"/>
+    <property name="module.classes" value="${module.dir}/classes"/>
+    <property name="module.java15.classes" value="${module.dir}/classes15"/>
+    <property name="module.jar" value="${lib.dir}/mxmlc.jar"/>
+    <property name="module.ja.jar" value="${lib.dir}/mxmlc_ja.jar"/>
+    <property name="mxmlc.main" value="flex2.tools.Compiler"/>
+    <property name="mxmlc.classpath" value="asc.jar xmlParserAPIs.jar afe.jar aglj32.jar rideau.jar batik-all-flex.jar mm-velocity-1.4.jar commons-collections.jar commons-discovery.jar commons-logging.jar license.jar swfutils.jar flex-fontkit.jar flex-messaging-common.jar mxmlc_ja.jar xalan.jar"/>
+    <property name="compc.main" value="flex2.tools.Compc"/>
+    <property name="compc.classpath" value="mxmlc.jar ${mxmlc.classpath}"/>
+    <property name="asdoc.main" value="flex2.tools.ASDoc"/>
+    <property name="asdoc.classpath" value="mxmlc.jar ${mxmlc.classpath}"/>
+    <property name="build.number" value=""/>
+
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+
+    <target name="main" depends="clean,dev" description="cleans and runs the full build"/>
+    <target name="dev" depends="jar,asdoc-helper" description="runs src.depend build for development"/>
+
+    <target name="prepare">
+        <echo level="info">${ant.file}</echo>
+        <mkdir dir="${lib.dir}"/>
+        <mkdir dir="${module.classes}"/>
+        <mkdir dir="${module.java15.classes}"/>
+    </target>
+
+    <target name="run-depend" if="src.depend">
+        <echo level="info" message="Removing class files that changed and dependent class files."/>
+        <depend cache="${module.classes}" srcdir="${module.src}" destdir="${module.classes}"/>
+    </target>
+
+    <target name="compile" depends="prepare,run-depend" description="compile">
+        <javac source="${javac.src}" target="${javac.src}" debug="${src.debug}" destdir="${module.classes}" srcdir="${module.src}"
+            includes="**/*.java" classpathref="classpath"/>
+        <echo file="${module.classes}/flex2/tools/version.properties" append="false">build=${build.number}</echo>
+    </target>
+	
+    <target name="javacc">
+        <java classname="javacc" fork="true" failonerror="true">
+            <classpath>
+                <fileset dir="${lib.dir}" includes="javacc.jar"/>
+            </classpath>
+            <arg value="-OUTPUT_DIRECTORY=${module.src}/flex2/compiler/mxml"/>
+            <arg value="${module.src}/flex2/compiler/mxml/Grammar.jj"/>
+        </java>
+    </target>
+
+    <target name="localization">
+      <echo level="info" message="Copying localization files."/>
+      <copy todir="${module.classes}">
+          <fileset dir="${module.src}" includes="**/*.xlr,**/*.properties"/>
+      </copy>
+    </target>      
+
+    <!-- just copy all velocity templates *.vm from src/ to classes/ -->
+    <!-- TODO should actually compile them in Velocity for validation before copying -->
+    <target name="templates">
+        <echo level="info" message="Building serialized velocity templates."/>
+        <java fork="true" classname="flex.util.SerializedTemplateFactory" dir="${module.src}">
+            <classpath>
+                <fileset dir="${lib.dir}" includes="*.jar"/>
+            </classpath>
+            <arg value="flex2/compiler/mxml/gen/ClassDef.vm"/>
+            <arg value="flex2/compiler/mxml/gen/ClassDefLib.vm"/>
+            <arg value="flex2/compiler/mxml/gen/InterfaceDef.vm"/>
+            <arg value="flex2/compiler/css/FontFaceRules.vm"/>
+            <arg value="flex2/compiler/css/StyleDef.vm"/>
+            <arg value="flex2/compiler/css/StyleModule.vm"/>
+            <arg value="flex2/compiler/css/StyleLibrary.vm"/>
+            <arg value="flex2/compiler/as3/EmbedClass.vm"/>
+            <arg value="flex2/compiler/as3/StyleProperty.vm"/>
+            <arg value="flex2/compiler/as3/binding/BindableProperty.vm"/>
+            <arg value="flex2/compiler/as3/binding/WatcherSetupUtil.vm"/>
+            <arg value="flex2/compiler/as3/managed/ManagedProperty.vm"/>
+            <arg value="flex2/compiler/media/SkinClass.vm"/>
+        </java>
+        <copy todir="${module.classes}">
+            <fileset dir="${module.src}" includes="**/*.vms"/>
+        </copy>
+    </target>
+
+    <target name="jar" depends="javacc,compile,set-build-num,templates,localization" description="compile and create compiler jars">
+		<echo message="Building lib/mxmlc.jar"/>
+        <jar file="${module.jar}" basedir="${basedir}/modules/compiler/classes"
+            includes="**/*.properties,flex2/compiler/**/*,flex2/license/**/*,flex2/linker/**/*,flex2/tools/*,flex2/tools/oem/Message.class,flex2/tools/oem/ProgressMeter.class,flex2/tools/oem/Component.class,flex2/tools/oem/Script.class,flash/**/*,flex/**/*"
+            excludes="**/*_ja.properties,flex2/tools/Shell*,flex2/tools/Optimizer*,flex2/tools/Digest*">
+            <manifest>
+                <attribute name="Sealed" value="${manifest.sealed}"/>
+                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - MXML Compiler"/>
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+                <attribute name="Main-Class" value="${mxmlc.main}"/>
+                <attribute name="Class-Path" value="${mxmlc.classpath}"/>
+            </manifest>
+        </jar>
+		<echo message="Building lib/mxmlc_ja.jar"/>
+        <jar file="${module.ja.jar}" basedir="${basedir}/modules/compiler/classes"
+            includes="**/*_ja.properties"
+            excludes="flex2/tools/Shell*,flex2/tools/Optimizer*,flex2/tools/Digest*">
+            <manifest>
+                <attribute name="Sealed" value="${manifest.sealed}"/>
+                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - MXML Compiler (Japanese)"/>
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+                <attribute name="Main-Class" value="${mxmlc.main}"/>
+                <attribute name="Class-Path" value="batik_ja.jar mxmlc.jar"/>
+            </manifest>
+        </jar>
+		<echo message="Building lib/compc.jar"/>
+        <jar file="${basedir}/lib/compc.jar">
+            <manifest>
+                <attribute name="Sealed" value="${manifest.sealed}"/>
+                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - SWC Compiler"/>
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+                <attribute name="Main-Class" value="${compc.main}"/>
+                <attribute name="Class-Path" value="${compc.classpath}"/>
+            </manifest>
+        </jar>
+		<echo message="Building lib/asdoc.jar"/>
+        <jar file="${basedir}/lib/asdoc.jar">
+            <manifest>
+                <attribute name="Sealed" value="${manifest.sealed}"/>
+                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - ASDoc"/>
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+                <attribute name="Main-Class" value="${asdoc.main}"/>
+                <attribute name="Class-Path" value="${asdoc.classpath}"/>
+            </manifest>
+        </jar>		
+		<echo message="Building lib/fcsh.jar"/>
+        <jar file="${basedir}/lib/fcsh.jar" basedir="${basedir}/modules/compiler/classes"
+             includes="flex2/tools/SimpleShell*">
+            <manifest>
+          		<attribute name="Sealed" value="${manifest.sealed}"/>
+        		<attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Compiler Shell"/>
+			    <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+			    <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+                <attribute name="Main-Class" value="flex2.tools.SimpleShell"/>
+                <attribute name="Class-Path" value="mxmlc.jar"/>
+            </manifest>
+        </jar>
+        <copy file="${basedir}/modules/compiler/fds.sif" todir="${basedir}/modules/compiler/classes/flex/license"/>
+		<echo message="Building lib/flex-compiler-oem.jar"/>
+        <jar file="${basedir}/lib/flex-compiler-oem.jar" basedir="${basedir}/modules/compiler/classes"
+             includes="flex2/tools/oem/**/*,flex2/tools/flexbuilder/**/*,flex/license/*">
+            <manifest>
+                <attribute name="Sealed" value="${manifest.sealed}"/>
+                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - OEM Compiler"/>
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+                <attribute name="Class-Path" value="mxmlc.jar"/>
+            </manifest>
+        </jar>
+		<echo message="Building lib/optimizer.jar"/>
+        <jar file="${basedir}/lib/optimizer.jar" basedir="${basedir}/modules/compiler/classes"
+             includes="flex2/tools/Optimizer*">
+            <manifest>
+                <attribute name="Sealed" value="${manifest.sealed}"/>
+                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Optimizer"/>
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+                <attribute name="Main-Class" value="flex2.tools.Optimizer"/>
+                <attribute name="Class-Path" value="mxmlc.jar"/>
+            </manifest>
+        </jar>
+		<echo message="Building lib/digest.jar"/>
+        <jar file="${basedir}/lib/digest.jar" basedir="${basedir}/modules/compiler/classes"
+             includes="flex2/tools/Digest*">
+            <manifest>
+                <attribute name="Sealed" value="${manifest.sealed}"/>
+                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Digest Tool"/>
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+                <attribute name="Main-Class" value="flex2.tools.DigestTool"/>
+                <attribute name="Class-Path" value="compc.jar"/>
+            </manifest>
+        </jar>
+		<echo message="Building lib/copylocale.jar"/>
+        <jar file="${basedir}/lib/copylocale.jar" basedir="${basedir}/modules/compiler/classes"
+             includes="flex2/tools/CopyLocale*">
+            <manifest>
+                <attribute name="Sealed" value="${manifest.sealed}"/>
+                <attribute name="Implementation-Title" value="${manifest.Implementation-Title} - Copy Locale"/>
+                <attribute name="Implementation-Version" value="${manifest.Implementation-Version}.${build.number}"/> 
+                <attribute name="Implementation-Vendor" value="${manifest.Implementation-Vendor}"/>
+                <attribute name="Main-Class" value="flex2.tools.CopyLocale"/>
+                <attribute name="Class-Path" value="compc.jar"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="set-build-num">
+        <!-- Dynamically creating /flex2/tools/version.properties,
+             other locales would need to be manually created here -->
+        <delete failonerror="false" file="${module.classes}/flex2/tools/version.properties" />
+        <echo file="${module.classes}/flex2/tools/version.properties" append="false">build=${build.number}</echo>
+    </target>
+
+    <target name="clean" description="clean">
+		<delete failonerror="false" file="${module.src}/velocity.log"/>
+		<delete failonerror="false" >
+			<fileset dir="${module.src}" includes="**/*.vms"/>
+		</delete>
+        <delete failonerror="false" includeEmptyDirs="true">
+            <fileset dir="${module.src}/flex2/compiler/mxml" includes="ParseException.java,Parser.java,ParserConstants.java,Token.java,TokenManager.java"/>
+        </delete>
+        <delete file="${module.jar}" failonerror="false"/>
+        <delete file="${module.ja.jar}" failonerror="false"/>
+        <delete file="${basedir}/lib/compc.jar" failonerror="false"/>
+        <delete file="${basedir}/lib/asdoc.jar" failonerror="false"/>
+        <delete file="${basedir}/lib/fcsh.jar" failonerror="false"/>
+        <delete file="${basedir}/lib/flex-compiler-oem.jar" failonerror="false"/>
+        <delete file="${basedir}/lib/digesttool.jar" failonerror="false"/>
+        <delete file="${basedir}/lib/optimizer.jar" failonerror="false"/>
+        <delete file="${basedir}/lib/digest.jar" failonerror="false"/>
+        <delete file="${basedir}/lib/copylocale.jar" failonerror="false"/>
+        <delete file="${templates.dir}/asDocHelper.exe" failonerror="false"/>				
+        <delete file="${module.dir}/asdoc/asDocHelper.abc" failonerror="false"/>
+        <!--
+		<delete failonerror="false" includeEmptyDirs="true">
+            <fileset dir="${module.classes}">
+                <include name="**/*"/>
+                <exclude name="dependencies.txt"/>
+            </fileset>
+        </delete>
+        <delete failonerror="false" includeEmptyDirs="true">
+            <fileset dir="${module.java15.classes}">
+                <include name="**/*"/>
+                <exclude name="dependencies.txt"/>
+            </fileset>
+        </delete>
+		-->
+		<delete failonerror="false" dir="${module.classes}"/>
+		<delete failonerror="false" dir="${module.java15.classes}"/>
+    </target>
+
+    <target name="asdoc-helper">
+        <java jar="${lib.dir}/asc.jar" fork="true" failonerror="true">
+            <arg line="-optimize -AS3 -exe '${module.dir}/asdoc/avmplus.exe' -import '${module.dir}/asdoc/Global.abc' '${module.dir}/asdoc/asDocHelper.as'"/>
+        </java>
+		<move file="${module.dir}/asdoc/asDocHelper.exe" todir="${templates.dir}" />
+    </target>
+
+    <target name="asdoc-helper-mac">
+        <java jar="${flex.dir}/lib/asc.jar" fork="true" failonerror="true">
+            <arg line="-optimize -AS3 -exe ${module.dir}/asdoc/avmplus -import ${module.dir}/asdoc/Global.abc ${module.dir}/asdoc/asDocHelper.as"/>
+        </java>
+	<move file="${module.dir}/asdoc/asDocHelper.exe" tofile="${templates.dir}/asDocHelper" />
+	<chmod file="${templates.dir}/asDocHelper" perm="ugo+rx" />
+    </target>
+
+    <target name="asdoc-helper-linux">
+        <java jar="${lib.dir}/asc.jar" fork="true" failonerror="true">
+            <arg line="-optimize -AS3 -exe ${module.dir}/asdoc/avmplus.linux -import ${module.dir}/asdoc/Global.abc ${module.dir}/asdoc/asDocHelper.as"/>
+        </java>
+	<move file="${module.dir}/asdoc/asDocHelper.exe" tofile="${templates.dir}/asDocHelper.linux" />
+	<chmod file="${templates.dir}/asDocHelper.linux" perm="ugo+rx" />
+    </target>
+	
+</project>

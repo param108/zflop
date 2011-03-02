@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- A custom component that displays a list of products in a Thumbnail view -->
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+		 verticalGap="0" >
+
+    <!-- The change event is dispatched when the user clicks a product.
+         Using events instead of passing references between objects leads to more loosely coupled and thus more reusable components -->
+
+    <mx:Metadata>
+        [Event("change")]
+    </mx:Metadata>
+
+    <mx:Script>
+    <![CDATA[
+        import mx.collections.Sort;
+        import mx.collections.SortField;
+		import ProductThumbnail;
+		
+		[Bindable]
+        public var _data:Array;
+        
+		public var selectedItem:Object;
+
+        public function filter(min:Number, max:Number):void
+		{
+			ProductThumbnail.setMinMax(min, max); 
+			
+			var n:int = _data.length;
+			for (var i:int = 0; i < n; i++)
+			{
+                var item:Object = _data[i];
+                var cell:Object = myTile.itemToItemRenderer(item);
+                if (cell)
+				{
+                    cell.doFilter();
+                    cell.invalidateDisplayList();
+                }
+            } 
+        }
+
+        public function sort(sortBy:String):void
+		{
+			var cs:Sort = new Sort();
+            if (sortBy == "Name")
+				cs.fields = [ new SortField("name") ];
+	        else if (sortBy == "Price")
+				cs.fields = [ new SortField("price") ];
+            myTile.dataProvider.sort = cs;
+			myTile.dataProvider.refresh();
+        }
+
+        public function set dataProvider(p:Array):void
+		{
+            _data = p;
+        }
+
+        public function unselect():void
+		{
+            myTile.selectedIndex = -1;
+        }
+
+    ]]>
+    </mx:Script>
+
+    <mx:TileList id="myTile" dataProvider="{_data}" itemRenderer="ProductThumbnail"
+        width="100%" height="100%" columnWidth="120" rowHeight="118" borderStyle="none"
+        dragEnabled="true" dragMoveEnabled="false" creationComplete="sort('Name')"
+        change="selectedItem=myTile.selectedItem; dispatchEvent(new Event('change'))"/>
+
+</mx:VBox>

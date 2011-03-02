@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- A custom component that displays a list of products in a DataGrid view -->
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" verticalGap="0" height="500" width="500">
+
+    <mx:Metadata>
+        [Event("change")]
+    </mx:Metadata>
+
+    <mx:Script>
+
+        public var selectedItem:Object;
+        
+		[Bindable]
+        public var _dataProvider:Array; //AS3 must be public for databinding
+
+        public function set dataProvider(dataProvider:Array):void {
+            _dataProvider = dataProvider;
+        }
+    
+	</mx:Script>
+
+    <mx:DataGrid id="list"
+        dataProvider="{_dataProvider}"
+        change="selectedItem = DataGrid(event.target).selectedItem; dispatchEvent(new Event('change'))"
+        width="100%"
+        height="100%">
+        <mx:columns>
+            <mx:Array>
+                <mx:DataGridColumn dataField="name" headerText="Name" width="300"/>
+                <mx:DataGridColumn dataField="price" headerText="Price" textAlign="right" paddingRight="4"/>
+            </mx:Array>
+        </mx:columns>
+    </mx:DataGrid>
+
+</mx:VBox>

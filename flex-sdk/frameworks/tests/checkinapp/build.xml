@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2006-2007 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<project name="checkinapp" default="main" basedir=".">
+
+	<property name="sdk.dir" value="${basedir}/../../.."/>
+	<property name="frameworks.dir" value="${basedir}/../.."/>
+
+    <condition property="flash.player" value="${sdk.dir}/in/player/win/FlashPlayer.exe">
+        <os family="windows"/>
+    </condition>
+    
+    <condition property="flash.player" value="${sdk.dir}/in/player/mac/Flash Player.app/Contents/MacOS/Flash Player">
+        <os family="mac"/>
+    </condition>
+
+	<target name="main" depends="clean,compile,run"/>
+
+	<target name="clean">
+		<delete dir="generated"/>
+		<delete>
+			<fileset dir="${basedir}" includes="checkinapp*.swf,checkinapp.swf.xml,*-generated.as"/>
+		</delete>
+	</target>
+
+	<target name="compile">
+		<property name="base.mxmlc.options" value="-output ${basedir}/checkinapp.swf --verbose-stacktraces ${basedir}/checkinapp.mxml"/>
+		<property name="theme.option" value=""/>
+		<property name="mxmlc.options" value="${theme.option} ${base.mxmlc.options}"/>
+		<ant dir="${frameworks.dir}" target="mxmlc"/>
+	</target>
+
+	<target name="autumn">
+		<property name="theme.option" value="--theme ${basedir}/css/autumn.css"/>
+		<antcall target="main"/>    
+	</target>
+
+	<target name="cluborange">
+		<property name="theme.option" value="--theme ${basedir}/css/cluborange.css"/>
+		<antcall target="main"/>    
+	</target>
+
+	<target name="htmlclassic">
+		<property name="theme.option" value="--theme ${basedir}/css/htmlclassic.css"/>
+		<antcall target="main"/>    
+	</target>
+
+	<target name="industrial">
+		<property name="theme.option" value="--theme ${basedir}/css/industrial.css"/>
+		<antcall target="main"/>    
+	</target>
+
+	<target name="institutional">
+		<property name="theme.option" value="--theme ${basedir}/css/institutional.css"/>
+		<antcall target="main"/>    
+	</target>
+
+	<target name="run">
+        <exec executable="${flash.player}" failonerror="true">
+			<arg line="${basedir}/checkinapp.swf"/>
+		</exec>
+	</target>
+
+	<!--
+	<target name="debug">
+		<dirname file="${server.dir}/apps/j2ee/samples/WEB-INF/flex/flex-enterprise-services.xml" property="flex.services.dir"/>
+		<java classname="flex2.tools.Compiler" dir="." fork="true" failonerror="true">
+			<classpath>  
+				<fileset dir="${sdk.dir}/lib" includes="*.jar" />
+			</classpath>    
+			<jvmarg line="-ea -DAS3 -DAVMPLUS -Xms32m -Xmx384m -Dsun.io.useCanonCaches=false -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"/>
+			<arg line="-load-config=${frameworks.dir}/flex-config.xml -source-path=${frameworks.dir} -keep -debug -verbose-stacktraces ${basedir}/checkinapp.mxml"/>
+		</java>
+	</target>
+	-->
+
+</project>

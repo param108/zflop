@@ -1,0 +1,116 @@
+/*
+////////////////////////////////////////////////////////////////////////////////
+//
+//  ADOBE SYSTEMS INCORPORATED
+//  Copyright 2005-2006 Adobe Systems Incorporated
+//  All Rights Reserved.
+//
+//  NOTICE: Adobe permits you to use, modify, and distribute this file
+//  in accordance with the terms of the license agreement accompanying it.
+//
+////////////////////////////////////////////////////////////////////////////////
+*/
+
+.global {
+    font-family:"Tahoma";
+    font-size:11px;
+    color:#222222;
+}
+
+.appTitle {
+    font-weight:bold;
+    font-size:16px;
+}
+
+Application {
+	background-image: "";
+    theme-color:#CC6600;
+    selection-color:#D0DFE6;
+    roll-over-color:#E6F0F3;
+    background-color:#FFFCEC;
+}
+
+
+
+Panel {
+    header-colors: #FAEED1, #E3C38D;
+    footer-colors: #F4DBB0, #E3C38D;
+    corner-radius:10;
+    drop-shadow: true;
+    shadow-distance:6;
+    margin-top:0;
+    margin-left:0;
+    margin-right:0;
+    margin-bottom:0;
+}
+
+
+
+Button {
+    color: #FFFFFF;
+    disabled-color: #999999;
+    text-roll-over-color: #FFFFFF;
+    font-family:"Verdana";
+    font-size: 9px;
+    font-weight: "bold";
+    fill-colors: #C86336, #763322;
+    corner-radius:8;
+    border-color: #854230;
+    border-thickness:3;
+}
+
+
+CheckBox {
+    color: #000000;
+    font-size: 10px;
+    font-weight: "normal";
+}
+
+RadioButton {
+    color: #000000;
+    font-size: 10px;
+    font-weight: "normal";
+}
+
+
+
+DataGrid {
+    alternating-row-colors:#FFFCEC,#FFF6E2;
+    border-style:"solid";
+    border-color:#CCCCCC;
+    header-color:#FAEED1;
+    v-grid-line-color:#CCCCCC;
+    color:#111111;
+    font-size:9px;
+    text-indent:4;
+}
+
+
+
+
+ComboBox {
+    color: #111111;
+    text-roll-over-color: #111111;
+    font-size:9px;
+    font-weight: "bold";
+    fill-colors: #FFFFFF, #C2CCCF;
+    background-color: #FFFCEC;
+    corner-radius: 7;
+    border-thickness: 1;
+    border-color: #854230;
+    margin-left: 6;
+    selection-color:#f5dcb2;
+    roll-over-color:#faeed1;
+
+}
+
+
+HSlider {
+    fill-colors: #FFFFFF, #C2CCCF;
+    track-colors: #FAEED1, #E3C38D;
+    border-color: #666666;
+    tick-color: #666666;
+    label-offset: -3;
+    tick-offset: -3;
+    track-highlight: true;
+}

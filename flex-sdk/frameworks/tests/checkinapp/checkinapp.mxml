@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    creationComplete="initApp()"
+    paddingTop="8"
+    verticalGap="0"
+    pageTitle="FlexStore"
+    height="700"
+    width="1000">
+
+    <!-- mx:QTPTestingManager/ -->
+
+    <!-- The ActionScript code for this class is externalized in a separate .as file for better readability -->
+    <mx:Script source="checkinapp_script.as"/>
+
+    <!-- Style sheet used in this application -->
+    <mx:Style source="checkinapp.css"/>
+
+    <!-- A pure ActionScript class (ShoppingCart.as) used to keep track of items in the ShoppingCart.
+         (A Model class in the MVC architecture used in this application) -->
+    <ShoppingCart id="cart"/>
+
+    <!-- The product list is retrieved from an XML file. -->
+    <mx:Model id="catalog" source="catalog.xml"/>
+
+    <mx:VBox>   
+        <mx:Label text="checkinapp: The app formerly known as flexstore" styleName="appTitle"/>
+
+        <mx:HBox id="hb" horizontalGap="4" height="555">
+
+            <mx:Panel id="main" title="Product Catalog" width="512" height="100%">
+
+                <mx:ViewStack id="bodyStack" width="100%" height="100%">
+
+                    <!-- A custom component (ThumbnailView.mxml) that displays the list of products in a Thumbnail view:
+                         This is the view displayed when you start the application.  When the user clicks a product
+                         (change event), we store the selected item in the selectedItem instance variable of this application -->
+                    <ThumbnailView id="thumbView"
+                        label="Product Catalog"
+                        dataProvider="{catalog.product}"
+                        change="selectedItem = ThumbnailView(event.target).selectedItem" showEffect="Fade"/>
+
+                    <!-- A custom component (GridView.mxml) providing another way (DataGrid) to look at the same data -->
+                    <GridView id="gridView"
+                        dataProvider="{catalog.product}"
+                        change="selectedItem = GridView(event.target).selectedItem" showEffect="Fade"/>
+
+                    <!-- A custom component (Checkout.mxml) that provides the user interface for checking out -->
+                    <Checkout id="checkoutView" cartData="{cart}" showEffect="Fade"/>
+
+                </mx:ViewStack>
+
+                <mx:ControlBar height="50">
+
+                    <mx:ViewStack id="controlStack">
+
+                        <mx:HBox id="thumbCtrl" verticalAlign="middle">
+                            <mx:Label text="Price range"/>
+                            <mx:HSlider id="priceSlider" minimum="0" maximum="150" tickInterval="10" snapInterval="1"
+                                width="150" thumbCount="2" values="[0,150]" labels="[0,150]" liveDragging="true"
+                                change="thumbView.filter(priceSlider.values[0], priceSlider.values[1])"
+                                thumbPress="thumbView.unselect()" />
+                            <mx:Label text="Sort by"/>
+                            <mx:ComboBox width="70" change="thumbView.sort(ComboBox(event.target).selectedItem as String)">
+                                <mx:dataProvider>
+                                    <mx:Array>
+                                        <mx:String>Name</mx:String>
+                                        <mx:String>Price</mx:String>
+                                    </mx:Array>
+                                </mx:dataProvider>
+                            </mx:ComboBox>
+                        </mx:HBox>
+
+                        <mx:HBox id="gridCtrl"/>
+
+                        <mx:HBox id="checkoutCtrl">
+                            <mx:Button label="Complete Purchase" click="checkoutView.confirmOrder()"/>
+                        </mx:HBox>
+
+                    </mx:ViewStack>
+
+                    <mx:Spacer width="100%"/>
+
+                    <mx:HBox horizontalGap="0">
+                        <mx:Image id="thumbImage"
+                                  source="{currentView == 'thumb' ? thumbOn : thumbOff}"
+                                  click="changeView('thumb')"
+                                  mouseOver="thumbImage.source = thumbRoll"
+                                  mouseOut="thumbImage.source = (currentView=='thumb' ? thumbOn : thumbOff)"/>
+                        <mx:Image id="listImage"
+                                  source="{currentView == 'grid' ? listOn : listOff}"
+                                  click="changeView('grid')"
+                                  mouseOver="listImage.source = listRoll"
+                                  mouseOut="listImage.source = (currentView == 'grid' ? listOn : listOff)"/>
+                    </mx:HBox>
+
+                </mx:ControlBar>
+
+            </mx:Panel>
+
+            <mx:VBox width="100%" height="100%">
+
+                <mx:Canvas id="topCanvas" width="370" height="325" verticalScrollPolicy="off">
+                    <!-- A custom component (ProductDetail.mxml) that displays details for the product selected in ThumbnailView or GridView.
+                    The data attribute of the component is bound to the selectedItem instance variable ensuring that the ProductDetail component is automatically notified
+                    when the selected item changes -->
+                    <ProductDetail id="productDetail" item="{selectedItem}" shoppingCart="{cart}" width="100%" height="100%" verticalScrollPolicy="off"/>
+                    <PanelControl id="statusTop" width="100%" resizeEvent="slide(event)"/>
+                </mx:Canvas>
+
+                <mx:Canvas id="bottomCanvas" width="370" height="100%" verticalScrollPolicy="off">
+                    <!-- A custom component (CartView.mxml) that displays the content of the shopping cart. This is a good example of separation between the user interface logic
+                        and the data in your application. This component focuses exclusively on the user interface aspect of the shopping cart.
+                        The ShoppingCart class is responsible for the data aspect. The data attribute of the Cartview component
+                        is bound to cart (the instance of ShoppingCart declared at the top of this file) -->
+                    <CartView id="cartView" cartItems="{cart}" width="100%" height="100%"
+                        itemSelected="selectedItem = CartView(event.target).selectedItem"
+                        checkOut="changeView('checkout')" verticalScrollPolicy="off"/>
+                    <PanelControl id="statusBottom" width="100%" resizeEvent="slide(event)"/>
+                </mx:Canvas>
+
+            </mx:VBox>
+
+        </mx:HBox>
+
+        <mx:HBox width="100%" verticalAlign="top" paddingTop="0" paddingRight="10" horizontalGap="4">
+            <mx:Spacer width="100%"/>
+            <mx:VBox paddingTop="6">
+                <mx:LinkButton label="Product images and descriptions courtesy of ThinkGeek" fontSize="9" click="navigateToURL(new URLRequest('http://www.thinkgeek.com'))"/>
+            </mx:VBox>
+            <mx:Image source="@Embed('assets/products/tg-logo.gif')" click="navigateToURL(new URLRequest('http://www.thinkgeek.com'))"/>
+        </mx:HBox>
+
+    </mx:VBox>
+
+</mx:Application>

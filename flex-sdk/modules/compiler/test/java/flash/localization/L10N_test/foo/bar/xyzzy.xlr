@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<messages>
+  <message id="one">
+    <target locale="en">
+      <text><![CDATA[hello, ]]></text>
+      <text>world!</text>
+      <text value=" this is NOT a ${what}!" />
+    </target>
+    <target locale="en_us">
+      <text><![CDATA[hello, ]]></text>
+      <text>world!</text>
+      <text value=" this is a ${what}!" />
+    </target>
+    <target locale="fr" text="Bonjour, Monde!" />
+  </message>
+</messages>

@@ -1,0 +1,1136 @@
+<?xml version="1.0"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2004-2007 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<project name="sdk" default="main" basedir=".">
+
+	<property file="${basedir}/build.properties"/>
+	<property environment="env"/>
+	<property name="debug" value="true"/>
+	<property name="strict" value="true"/>
+	<property name="javac.src" value="1.4"/>
+	<property name="build.number" value="0"/>
+
+
+    <condition property="flash.player" value="${basedir}/in/player/win/FlashPlayer.exe">
+        <os family="windows"/>
+    </condition>
+
+    <condition property="flash.player" value="${basedir}/in/player/mac/Flash Player.app/Contents/MacOS/Flash Player">
+        <os family="mac"/>
+    </condition>
+
+    <condition property="isMac" value="true">
+        <os family="mac"/>
+    </condition>
+
+    <condition property="isWindows">
+        <os family="windows" />
+    </condition>
+
+	<!--
+		Notes: If you're running the main target, then there is no need to call clean first.
+		Each of the main targets for the modules will call clean themselves before proceeding.
+	-->
+
+	<target name="main" depends="pre-build,modules,frameworks,frameworks-rsls,post-build" description="Full build">
+	    <tstamp>
+            <format property="build.datetime" pattern="MM/dd/yyyy hh:mm:ss aa" />
+        </tstamp>
+        <echo>ant main target completed on ${build.datetime}</echo>
+	</target>
+
+	<target name="dev" depends="modules-dev" description="Runs src.depend build for development"/>
+
+	<target name="help">
+		<echo message="run ant -projecthelp to see the available targets"/>
+    </target>
+
+    <target name="pre-build" depends="create-description,prepare-html-templates" description="stuff that needs to be done before any builds" />
+
+    <target name="create-description">
+    	<echo file="${basedir}/flex-sdk-description.xml">&lt;?xml version="1.0"?&gt;
+&lt;flex-sdk-description&gt;
+&lt;name&gt;${release}&lt;/name&gt;
+&lt;version&gt;${release.version}&lt;/version&gt;
+&lt;build&gt;${build.number}&lt;/build&gt;
+&lt;/flex-sdk-description&gt;
+		</echo>
+	</target>
+
+	<!--
+		Cleanup
+	-->
+
+	<target name="clean" depends="modules-clean,frameworks-clean,package-clean,frameworks-rsls-clean,checkintests-clean,templates-clean,mac-player-clean" description="Full clean">
+		<delete file="${basedir}/flex-sdk-description.xml" failonerror="false"/>
+		<delete file="${basedir}/retroguard.log" failonerror="false"/>
+	</target>
+
+	<target name="modules-clean">
+		<ant antfile="${basedir}/modules/swfutils/build.xml" target="clean"/>
+		<ant antfile="${basedir}/modules/debugger/build.xml" target="clean"/>
+		<ant antfile="${basedir}/modules/compiler/build.xml" target="clean"/>
+		<ant antfile="${basedir}/modules/antTasks/build.xml" target="clean"/>
+	</target>
+
+	<target name="frameworks-clean">
+		<ant dir="${basedir}/frameworks" target="clean"/>
+	</target>
+
+	<target name="package-clean" depends="clean-temp">
+		<delete dir="${basedir}/out" failonerror="false" includeEmptyDirs="true"/>
+		<mkdir dir="${basedir}/out"/>
+	</target>
+
+	<target name="frameworks-rsls-clean">
+		<delete dir="${basedir}/frameworks/rsls" includeEmptyDirs="true" quiet="true"/>
+	</target>
+
+	<target name="checkintests-clean" depends="clean-dependencychecker">
+		<delete file="${basedir}/frameworks/tests/AIRExamples/AIRDemo.swf"/>
+		<delete file="${basedir}/frameworks/tests/checkinapp/checkinapp.swf"/>
+		<delete file="${basedir}/frameworks/tests/componentSmoke/componentSmoke2.swf"/>
+		<delete file="${basedir}/mustella/MustellaResultsParser.class"/>
+    </target>
+
+    <target name="templates-clean">
+        <delete failonerror="false">
+            <fileset dir="${basedir}/templates/html-templates">
+                <include name="**/AC_OETags.js"/>
+                <exclude name="metadata/**" />
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="mac-player-clean" if="isMac">
+        <delete dir="${basedir}/in/player/mac/Flash Player.app" />
+    </target>
+
+	<!--
+		Build Java module JARs
+	-->
+
+	<target name="modules" depends="swfutils,debugger,compiler,antTasks" description="Full build of all JARs"/>
+
+	<target name="modules-dev" depends="swfutils-dev,debugger-dev,compiler-dev,antTasks-dev" description="Build src.depend JARs"/>
+
+	<target name="swfutils" description="Full build of swfutils.jar">
+		<ant antfile="${basedir}/modules/swfutils/build.xml"/>
+	</target>
+
+	<target name="swfutils-dev" description="Build src.depend swfutils">
+		<ant antfile="${basedir}/modules/swfutils/build.xml" target="dev"/>
+	</target>
+
+	<target name="debugger" description="Full build of fdb.jar">
+		<ant antfile="${basedir}/modules/debugger/build.xml"/>
+	</target>
+
+	<target name="debugger-dev" description="Build src.depend debugger">
+		<ant antfile="${basedir}/modules/debugger/build.xml" target="dev"/>
+	</target>
+
+	<target name="compiler" description="Full build of compiler JARs">
+		<ant antfile="${basedir}/modules/compiler/build.xml"/>
+	</target>
+
+	<target name="compiler-dev" description="Build src.depend compiler JARs">
+		<ant antfile="${basedir}/modules/compiler/build.xml" target="dev"/>
+	</target>
+
+	<target name="antTasks" description="Full build of antTasks" unless="antTasks.compiled" depends="prepare-html-templates" >
+		<ant antfile="${basedir}/modules/antTasks/build.xml"/>
+		<property name="antTasks.compiled" value="true"/>
+	</target>
+
+	<target name="antTasks-dev" description="Build src.depend antTasks" depends="prepare-html-templates">
+		<ant antfile="${basedir}/modules/antTasks/build.xml" target="dev"/>
+	</target>
+
+	<!--
+		Build framework SWCs
+	-->
+
+	<target name="frameworks" description="Full build of all framework SWCs, including resource bundles and themes">
+		<ant dir="${basedir}/frameworks">
+			<property name="locale" value="en_US"/>
+		</ant>
+
+	</target>
+
+	<target name="framework-compile" description="Recompile framework.swc">
+		<ant dir="${basedir}/frameworks/projects/framework" target="compile">
+			<property name="locale" value="en_US"/>
+		</ant>
+	</target>
+
+	<target name="airframework-compile" description="Recompile airframework.swc">
+		<ant dir="${basedir}/frameworks/projects/airframework" target="compile"/>
+	</target>
+
+	<target name="bundles" description="Full build of all framework resource bundles">
+		<ant dir="${basedir}/frameworks" target="bundles"/>
+	</target>
+
+    <!--
+		Build framework RSLs
+		Done outside the framework directory because customers won't be able to create signed RSLs
+	-->
+
+	<target name="frameworks-rsls" description="Build signed framework RSLs">
+		<macrodef name="create-rsl">
+			<attribute name="rsl-dir"/>
+			<attribute name="swc-dir"/>
+			<attribute name="swc-name"/>
+
+			<sequential>
+				<unzip src="@{swc-dir}/@{swc-name}.swc"
+					   dest="@{rsl-dir}" >
+					<patternset>
+						<include name="library.swf" />
+					</patternset>
+				</unzip>
+				<java jar="${basedir}/lib/optimizer.jar" fork="true" failonerror="true">
+					<jvmarg line="-ea -DAS3 -DAVMPLUS -Dflexlib=${basedir}/frameworks -Xms32m -Xmx384m -Dsun.io.useCanonCaches=false"/>
+					<arg line="'@{rsl-dir}/library.swf' --output '@{rsl-dir}/@{swc-name}_${release.version}.${build.number}.swf' --keep-as3-metadata='Bindable,Managed,ChangeEvent,NonCommittingChangeEvent,Transient' "/>
+				</java>
+				<delete file="@{rsl-dir}/library.swf"/>
+				<java jar="${basedir}/lib/digest.jar" fork="true" failonerror="true">
+					<jvmarg line="-ea -DAS3 -DAVMPLUS -Xms32m -Xmx384m -Dsun.io.useCanonCaches=false"/>
+					<arg line="--digest.rsl-file '@{rsl-dir}/@{swc-name}_${release.version}.${build.number}.swf' --digest.swc-path  '@{swc-dir}/@{swc-name}.swc' --digest.signed=true"/>
+				</java>
+				<java jar="${basedir}/lib/digest.jar" fork="true" failonerror="true">
+					<jvmarg line="-ea -DAS3 -DAVMPLUS -Xms32m -Xmx384m -Dsun.io.useCanonCaches=false"/>
+					<arg line="--digest.rsl-file  '@{rsl-dir}/@{swc-name}_${release.version}.${build.number}.swf' --digest.swc-path  '@{swc-dir}/@{swc-name}.swc' --digest.signed=false"/>
+				</java>
+			</sequential>
+		</macrodef>
+
+		<!-- framework RSL -->
+		<create-rsl rsl-dir="${basedir}/frameworks/rsls" swc-dir="${basedir}/frameworks/libs" swc-name="framework"/>
+
+		<!-- rpc RSL -->
+		<create-rsl rsl-dir="${basedir}/frameworks/rsls" swc-dir="${basedir}/frameworks/libs" swc-name="rpc"/>
+
+	</target>
+
+	<target name="post-build" depends="mac-unzip" description="Handle post-build activities" />
+
+    <target name="mac-unzip" description="Unzip the Mac player if this is a Mac" if="isMac">
+        <unzip dest="${basedir}/in/player/mac" src="${basedir}/in/player/mac/Flash Player.app.zip" />
+        <chmod file="${basedir}/in/player/mac/Flash Player.app/Contents/MacOS/Flash Player" perm="777" />
+    </target>
+
+    <!--
+		Build ASDoc
+	-->
+
+	<target name="asdoc" description="asdoc">
+		<ant antfile="${basedir}/modules/ASDocs/AS3/Process/bin/build.xml" target="package" dir="${basedir}/modules/ASDocs/AS3/Process/bin"/>
+	</target>
+
+    <!--
+		Build ZIPs:
+			Using the -Dno.air="true" switch will result in a zip file in the out directory called flex_sdk_3_sans_air.zip.
+			if this switch is left off, the zip will be called flex_3_sdk.zip and will contain the AIR integration kit.
+			The sdk-package target will always include the AIK unless -Dno.air="true".
+	-->
+
+    <target name="package" depends="clean,main,repackage"
+            description="Clean build of the zip files that are the SDK team's deliverables"/>
+
+    <target name="repackage" depends="sdk-package,additional-packages"
+			description="Creates zip files that are the SDK team's deliverables, from already-built files"/>
+
+	<target name="additional-packages"
+		depends="ja-locale-samples,utilities-package,antTasks-package,air-installers"/>
+
+	<target name="sdk-package" description="package task that creates flex_sdk_4.zip"
+		depends="prepare-html-templates,stage-for-zip,include-air"/>
+
+	<target name="zip-sans-air" if="no.air">
+		<zip destfile="${basedir}/out/flex_sdk_3_sans_air.zip">
+			<zipfileset dir="${basedir}/temp" excludes="bin/*, **/*.bat, **/*.sh, **/*.linux"/>
+			<zipfileset dir="${basedir}/temp" includes="bin/*, **/*.bat, **/*.sh, **/*.linux" filemode="755"/>
+		</zip>
+	</target>
+
+	<target name="include-air" unless="no.air">
+		<!-- BEGIN AIR Integration-->
+		<!-- Expand the Mac AIK on top of the SDK-to-be -->
+		<!-- Use cygwin tools to unzip the air packages in order to maintain the symlinks in runtimes -->
+	    <copy file="${basedir}/in/air/mac/AIR Integration Kit.tbz2" todir="${basedir}/temp"/>
+		<echo file="${basedir}/temp/air_unzip.sh">#!/bin/sh
+tar -xjf "AIR Integration Kit.tbz2" .
+			</echo>
+		<exec executable="sh" dir="${basedir}/temp">
+			<arg line="${basedir}/temp/air_unzip.sh"/>
+		</exec>
+		<delete file="${basedir}/temp/air_unzip.sh"/>
+		<delete file="${basedir}/temp/AIR Integration Kit.tbz2"/>
+		<!-- Expand the Win AIK on top of the SDK-to-be -->
+		<unzip src="${basedir}/in/air/win/AIR Integration Kit.zip" dest="${basedir}/temp"/>
+		<!-- Delete AIK files that we don't want in the Flex SDK -->
+		<delete file="${basedir}/temp/frameworks/libs/air/AIRAliases.js"/>
+		<delete file="${basedir}/temp/frameworks/libs/air/airglobal.abc"/>
+		<delete file="${basedir}/temp/frameworks/libs/air/servicemonitor.swf"/>
+		<!-- END AIR Integration -->
+		<mkdir dir="${basedir}/out"/>
+		<!-- Zip up all the files inside the temp folder (except for the -->
+		<!-- temp shell script zip_pkg.sh) to create out/flex_sdk_3.zip. -->
+		<!-- Note that we do not use ANT zip. We use Cygwin's zip utility -->
+		<!-- so that symlinks in the Mac AIR runtime are maintained. -->
+		<echo file="${basedir}/temp/zip_pkg.sh">#!/bin/sh
+zip -yrq ../out/flex_sdk_3 * -x /zip_pkg.sh
+		</echo>
+		<exec executable="sh" dir="${basedir}/temp">
+			<arg line="${basedir}/temp/zip_pkg.sh"/>
+		</exec>
+	</target>
+
+	<target name="stage-for-zip">
+		<mkdir dir="${basedir}/temp"/>
+		<copy todir="${basedir}/temp">
+			<fileset dir="${basedir}">
+				<include name="flex-sdk-description.xml"/>
+			</fileset>
+			<fileset dir="${basedir}/collateral/en_US/">
+				<include name="readme.htm"/>
+				<include name="license-adobesdk.htm"/>
+				<include name="license-mpl.htm"/>
+			</fileset>
+		</copy>
+
+		<!-- ant -->
+		<copy file="${basedir}/modules/antTasks/build.xml-distro"
+			  tofile="${basedir}/temp/ant/build.xml"/>
+		<copy file="${basedir}/modules/antTasks/flexTasks.tasks"
+			  todir="${basedir}/temp/ant"/>
+		<copy file="${basedir}/modules/antTasks/README.dist"
+			  tofile="${basedir}/temp/ant/README"/>
+		<copy todir="${basedir}/temp/ant/lib">
+			<fileset dir="${basedir}/lib" includes="flexTasks.jar"/>
+		</copy>
+		<copy todir="${basedir}/temp/ant/src">
+			<fileset dir="${basedir}/modules/antTasks/src/"
+				 includes="flex/**/*.java"
+				 excludes="flex/ant/AscTasks.java"/>
+		</copy>
+
+		<!-- asdoc -->
+		<copy todir="${basedir}/temp/asdoc">
+            <fileset dir="${basedir}/asdoc">
+                <!-- the following are for internal builds only -->
+				<exclude name="build.properties"/>
+				<exclude name="build.xml"/>
+				<exclude name="mxml-manifest.xml"/>
+            </fileset>
+		</copy>
+
+		<!-- bin -->
+		<copy todir="${basedir}/temp/bin">
+			<fileset dir="${basedir}/bin">
+				<include name="acompc"/>
+				<include name="acompc.bat"/>
+				<include name="amxmlc"/>
+				<include name="amxmlc.bat"/>
+				<include name="asdoc"/>
+				<include name="asdoc.exe"/>
+				<include name="aasdoc"/>
+				<include name="aasdoc.bat"/>
+				<include name="compc"/>
+				<include name="compc.exe"/>
+				<include name="copylocale"/>
+				<include name="copylocale.exe"/>
+				<include name="fcsh"/>
+				<include name="fcsh.exe"/>
+				<include name="fdb"/>
+				<include name="fdb.exe"/>
+				<include name="jvm.config"/>
+				<include name="mxmlc"/>
+				<include name="mxmlc.exe"/>
+				<include name="optimizer"/>
+				<include name="optimizer.exe"/>
+				<include name="digest"/>
+				<include name="digest.exe"/>
+			</fileset>
+		</copy>
+		<fixcrlf eol="unix" srcdir="${basedir}/temp/bin" includes="acompc,amxmlc,asdoc,compc,copylocale,fdb,mxmlc,fcsh,optimizer,digest"/>
+
+		<!-- frameworks -->
+		<copy todir="${basedir}/temp/frameworks">
+			<fileset dir="${basedir}/frameworks">
+				<include name="air-config.xml"/>
+				<include name="flash-unicode-table.xml"/>
+				<include name="flex-config.xml"/>
+				<include name="localFonts.ser"/>
+				<include name="macFonts.ser"/>
+				<include name="mxml-manifest.xml"/>
+				<include name="winFonts.ser"/>
+			</fileset>
+		</copy>
+		<replace file="${basedir}/temp/frameworks/flex-config.xml">
+			<replacefilter
+				token="&lt;warn-no-explicit-super-call-in-constructor&gt;true"
+				value="&lt;warn-no-explicit-super-call-in-constructor&gt;false"/>
+			<replacefilter
+				token="$${build.number}"
+				value="${release.version}.${build.number}"/>
+		</replace>
+		<replace file="${basedir}/temp/frameworks/air-config.xml">
+			<replacefilter
+				token="&lt;warn-no-explicit-super-call-in-constructor&gt;true"
+				value="&lt;warn-no-explicit-super-call-in-constructor&gt;false"/>
+			<replacefilter
+				token="$${build.number}"
+				value="${release.version}.${build.number}"/>
+		</replace>
+		<copy file="${basedir}/frameworks/build_framework.xml" tofile="${basedir}/temp/frameworks/build.xml"/>
+
+		<!-- frameworks/javascript -->
+		<copy todir="${basedir}/temp/frameworks/javascript/fabridge">
+			<fileset dir="${basedir}/frameworks/javascript/FABridge">
+				<exclude name="readme.txt"/>
+			</fileset>
+		</copy>
+
+		<!-- frameworks/libs -->
+		<copy todir="${basedir}/temp/frameworks/libs">
+			<fileset dir="${basedir}/frameworks/libs">
+				<include name="flex.swc"/>
+				<include name="framework.swc"/>
+				<include name="rpc.swc"/>
+				<include name="utilities.swc"/>
+				<include name="air/airframework.swc"/>
+				<include name="air/airglobal.swc"/>
+                <include name="player/9/playerglobal.swc"/>
+                <include name="player/10/playerglobal.swc"/>
+			</fileset>
+		</copy>
+
+		<!-- frameworks/locale -->
+		<copy todir="${basedir}/temp/frameworks/locale/en_US">
+			<fileset dir="${basedir}/frameworks/locale/en_US">
+				<include name="airframework_rb.swc"/>
+				<include name="framework_rb.swc"/>
+				<include name="rpc_rb.swc"/>
+			</fileset>
+		</copy>
+
+		<!-- frameworks/projects -->
+		<copy todir="${basedir}/temp/frameworks/projects">
+			<fileset dir="${basedir}/frameworks/projects">
+				<exclude name="**/asdoc/**"/>
+				<exclude name="**/*.intf"/>
+				<exclude name="**/*generated.as"/>
+				<exclude name="**/generated/**"/>
+				<exclude name="automation/**" />
+                <exclude name="automation/qtp/**" />
+				<exclude name="automation_agent/**"/>
+				<exclude name="automation_charts/**"/>
+				<exclude name="charts/**"/>
+				<exclude name="data_management/**"/>
+				<exclude name="graphics/**"/>
+				<exclude name="flash-integration/**"/>
+				<exclude name="qtp/**"/>
+				<exclude name="**/build.xml"/>
+				<exclude name="**/build.properties"/>
+				<exclude name="**/ja_JP/**"/>
+				<exclude name="**/*.incr"/>
+			</fileset>
+			<fileset dir="${basedir}/frameworks/projects">
+				<include name="rpc/bundles/en_US/**"/>
+			</fileset>
+		</copy>
+
+		<!-- frameworks/rsls -->
+		<copy todir="${basedir}/temp/frameworks/rsls">
+			<fileset dir="${basedir}/frameworks/rsls">
+				<include name="*.swf"/>
+			</fileset>
+		</copy>
+
+		<!-- frameworks/themes -->
+		<copy todir="${basedir}/temp/frameworks/themes">
+			<fileset dir="${basedir}/frameworks/themes"/>
+		</copy>
+
+
+		<!-- lib -->
+		<copy todir="${basedir}/temp/lib">
+			<fileset dir="${basedir}/lib">
+				<include name="afe.jar"/>
+				<include name="aglj32.jar"/>
+				<include name="asc.jar"/>
+				<include name="asdoc.jar"/>
+				<include name="batik-all-flex.jar"/>
+				<include name="batik-LICENSE.txt"/>
+				<include name="batik-NOTICE.txt"/>
+				<include name="commons-collections.jar"/>
+				<include name="commons-collections-LICENSE.txt"/>
+				<include name="commons-discovery.jar"/>
+				<include name="commons-discovery-LICENSE.txt"/>
+				<include name="commons-logging.jar"/>
+				<include name="commons-logging-LICENSE.txt"/>
+				<include name="commons-logging-NOTICE.txt"/>
+				<include name="compc.jar"/>
+				<include name="copylocale.jar"/>
+				<include name="digest.jar"/>
+				<include name="fdb.jar"/>
+				<include name="fcsh.jar"/>
+				<include name="flex-compiler-oem.jar"/>
+				<include name="flex-fontkit.jar" />
+				<include name="flex-messaging-common.jar"/>
+				<include name="license.jar"/>
+				<include name="mm-velocity-1.4.jar"/>
+				<include name="mm-velocity-LICENSE.txt"/>
+				<include name="mm-velocity-NOTICE.txt"/>
+				<include name="mxmlc.jar"/>
+				<include name="optimizer.jar"/>
+				<include name="rideau.jar"/>
+				<include name="swfutils.jar"/>
+				<include name="xalan.jar"/>
+				<include name="xalan-LICENSE.txt"/>
+				<include name="xalan-NOTICE.txt"/>
+				<include name="xercesImpl.jar"/>
+				<include name="xercesPatch.jar"/>
+				<include name="xerces-LICENSE.txt"/>
+				<include name="xmlParserAPIs.jar"/>
+			</fileset>
+		</copy>
+
+		<!-- runtimes -->
+		<copy todir="${basedir}/temp/runtimes/player">
+			<fileset dir="${basedir}/in/player">
+				<include name="lnx/flashplayer.tar.gz"/>
+				<include name="lnx/install_flash_player_9_linux.tar.gz"/>
+				<include name="mac/Flash Player.app.zip"/>
+				<include name="mac/Install Flash Player 9 UB.dmg"/>
+				<include name="win/FlashPlayer.exe"/>
+				<include name="win/Install Flash Player 9 ActiveX.exe"/>
+				<include name="win/Install Flash Player 9 Plugin.exe"/>
+				<include name="10/lnx/flashplayer.tar.gz"/>
+				<include name="10/lnx/libflashplayer.so.tar.gz"/>
+				<include name="10/lnx/install_flash_player_10_linux.tar.gz"/>
+				<include name="10/mac/Flash Player.app.zip"/>
+				<include name="10/mac/Install Flash Player 10 UB.dmg"/>
+				<include name="10/win/FlashPlayer.exe"/>
+				<include name="10/win/Install Flash Player 10 ActiveX.exe"/>
+				<include name="10/win/Install Flash Player 10 Plugin.exe"/>
+			</fileset>
+		</copy>
+
+		<!-- samples -->
+		<copy todir="${basedir}/temp/samples">
+			<fileset dir="${basedir}/samples">
+				<include name="readme.css"/>
+				<include name="README.txt"/>
+				<include name="explorer/**"/>
+				<exclude name="explorer/charts_explorer.xml"/>
+				<exclude name="explorer/charts/**"/>
+			</fileset>
+		</copy>
+		<copy todir="${basedir}/temp/samples/explorer" enablemultiplemappings="true" includeemptydirs="false">
+			<fileset dir="${basedir}/frameworks/projects/framework/asdoc/en_US/mx">
+				<include name="**/examples/**"/>
+				<exclude name="**/examples/generated/**"/>
+				<exclude name="**/examples/*.swf"/>
+				<exclude name="charts/**"/>
+			</fileset>
+			<!-- note this is windows only -->
+			<mapper type="regexp" from="(\w*)\\(.*examples\\)(.*)" to="\1\\\3"/>
+		</copy>
+
+		<fixcrlf eol="unix" srcdir="${basedir}/temp/samples" includes="**/*.sh"/>
+
+		<!-- templates -->
+		<copy todir="${basedir}/temp/templates">
+			<fileset dir="${basedir}/templates/html-templates" >
+				<include name="**/*"/>
+                <exclude name="metadata/**"/>
+			</fileset>
+		</copy>
+
+		<!-- ja properties -->
+		<antcall target="ja-locale-package"/>
+		<chmod dir="${basedir}/temp" perm="755" includes="bin/*, **/*.bat, **/*.sh, **/*.linux" />
+
+		<!-- The temp directory must be left around for the rmi-installers target to work. -->
+		<!-- <delete dir="${basedir}/temp" failonerror="false" includeEmptyDirs="true"/> -->
+	</target>
+
+	<!-- create the mpl only package -->
+	<target name="mpl-package">
+		<mkdir dir="temp"/>
+		<delete includeemptydirs="true">
+    		<fileset dir="temp" includes="**/*"/>
+  		</delete>
+
+		<!-- root docs -->
+		<copy todir="temp">
+			<fileset dir="collateral/en_US">
+				<include name="license-mpl.htm"/>
+				<include name="readme-open.htm"/>
+			</fileset>
+			<fileset dir=".">
+				<include name="build.xml"/>
+				<include name="build.properties"/>
+			</fileset>
+		</copy>
+
+		<!-- asdoc -->
+		<copy todir="temp/asdoc">
+			<fileset dir="asdoc">
+				<include name="**/*"/>
+				<exclude name="build.*"/>
+				<exclude name="mxml-manifest.xml"/>
+			</fileset>
+		</copy>
+
+		<!-- bin -->
+		<copy todir="temp/bin">
+			<fileset dir="bin">
+				<include name="aasdoc"/>
+				<include name="aasdoc.bat"/>
+				<include name="acompc"/>
+				<include name="acompc.bat"/>
+				<include name="amxmlc"/>
+				<include name="amxmlc.bat"/>
+				<include name="asdoc"/>
+				<include name="asdoc.exe"/>
+				<include name="compc"/>
+				<include name="compc.exe"/>
+				<include name="copylocale"/>
+				<include name="copylocale.exe"/>
+				<include name="digest"/>
+				<include name="digest.exe"/>
+				<include name="fcsh"/>
+				<include name="fcsh.exe"/>
+				<include name="fdb"/>
+				<include name="fdb.exe"/>
+				<include name="jvm.config"/>
+				<include name="mxmlc"/>
+				<include name="mxmlc.exe"/>
+				<include name="optimizer"/>
+				<include name="optimizer.exe"/>
+			</fileset>
+		</copy>
+
+		<!-- frameworks -->
+		<copy todir="temp/frameworks">
+			<fileset dir="frameworks">
+				<exclude name="**/*.incr"/>
+				<include name="air-config.xml"/>
+				<include name="build.xml"/>
+				<include name="flash-unicode-table.xml"/>
+				<include name="flex-config.xml"/>
+				<include name="javascript/license.txt"/>
+				<include name="libs/**"/>
+				<include name="locale/en_US/**"/>
+				<include name="localFonts.ser"/>
+				<include name="macFonts.ser"/>
+				<include name="mxml-manifest.xml"/>
+				<include name="winFonts.ser"/>
+				<include name="projects/airframework/**"/>
+				<exclude name="projects/airframework/build.*"/>
+				<exclude name="projects/airframework/asdoc/**"/>
+				<exclude name="projects/airframework/build.*"/>
+				<exclude name="projects/airframework/bundles/ja_JP/**"/>
+				<exclude name="projects/airframework/bundles/en_US/build.*"/>
+				<include name="projects/flex/**"/>
+				<exclude name="projects/flex/build.*"/>
+				<include name="projects/framework/**"/>
+				<exclude name="projects/framework/asdoc/**"/>
+				<exclude name="projects/framework/build.*"/>
+				<exclude name="projects/framework/bundles/en_US/build.*"/>
+				<exclude name="projects/framework/bundles/ja_JP/**"/>
+				<include name="projects/haloclassic/**"/>
+				<exclude name="projects/haloclassic/build.*"/>
+				<include name="projects/rpc/**"/>
+				<exclude name="projects/rpc/build.*"/>
+				<exclude name="projects/rpc/asdoc/**"/>
+				<exclude name="projects/rpc/bundles/ja_JP/**"/>
+				<include name="projects/utilities/**"/>
+				<exclude name="projects/utilities/build.*"/>
+				<include name="rsls/**"/>
+				<include name="themes/**"/>
+
+			</fileset>
+		</copy>
+		<copy todir="temp/frameworks/javascript/fabridge">
+			<fileset dir="frameworks/javascript/FABridge">
+				<exclude name="readme.txt"/>
+			</fileset>
+		</copy>
+
+		<!-- lib -->
+		<copy todir="temp/lib">
+			<fileset dir="lib">
+				<include name="asc.jar"/>
+				<include name="asdoc.jar"/>
+				<include name="batik-all-flex.jar"/>
+				<include name="batik-LICENSE.txt"/>
+				<include name="batik-NOTICE.txt"/>
+				<include name="commons-collections-LICENSE.txt"/>
+				<include name="commons-collections.jar"/>
+				<include name="commons-discovery-LICENSE.txt"/>
+				<include name="commons-discovery.jar"/>
+				<include name="commons-logging-LICENSE.txt"/>
+				<include name="commons-logging-NOTICE.txt"/>
+				<include name="commons-logging.jar"/>
+				<include name="compc.jar"/>
+				<include name="copylocale.jar"/>
+				<include name="digest.jar"/>
+				<include name="fcsh.jar"/>
+				<include name="fdb.jar"/>
+				<include name="flex-compiler-oem.jar"/>
+				<include name="flex-messaging-common.jar"/>
+				<include name="mm-velocity-1.4.jar"/>
+				<include name="mm-velocity-LICENSE.txt"/>
+				<include name="mxmlc.jar"/>
+				<include name="optimizer.jar"/>
+				<include name="swfutils.jar"/>
+				<include name="xalan-LICENSE.txt"/>
+				<include name="xalan-NOTICE.txt"/>
+				<include name="mm-velocity-NOTICE.txt"/>
+				<include name="xalan.jar"/>
+				<include name="xerces-LICENSE.txt"/>
+				<include name="xercesImpl.jar"/>
+				<include name="xercesPatch.jar"/>
+				<include name="xmlParserAPIs.jar"/>
+			</fileset>
+		</copy>
+
+		<!-- air badge samples -->
+		<copy todir="temp/samples/">
+			<fileset dir="samples">
+				<include name="badge/**"/>
+			</fileset>
+		</copy>
+
+		<!-- explorer sample -->
+		<!-- samples -->
+		<copy todir="${basedir}/temp/samples">
+			<fileset dir="${basedir}/samples">
+				<include name="readme.css"/>
+				<include name="README.txt"/>
+				<include name="explorer/**"/>
+				<exclude name="explorer/charts_explorer.xml"/>
+				<exclude name="explorer/charts/**"/>
+			</fileset>
+		</copy>
+		<copy todir="${basedir}/temp/samples/explorer" enablemultiplemappings="true" includeemptydirs="false">
+			<fileset dir="${basedir}/frameworks/projects/framework/asdoc/en_US/mx">
+				<include name="**/examples/**"/>
+				<exclude name="**/examples/generated/**"/>
+				<exclude name="**/examples/*.swf"/>
+				<exclude name="charts/**"/>
+			</fileset>
+			<!-- note this is windows only -->
+			<mapper type="regexp" from="(\w*)\\(.*examples\\)(.*)" to="\1\\\3"/>
+		</copy>
+
+			<!-- templates -->
+		<copy todir="${basedir}/temp/templates">
+			<fileset dir="templates/html-templates">
+				<include name="**/*"/>
+				<exclude name="build.*"/>
+				<exclude name="metadata/**"/>
+			</fileset>
+
+		</copy>
+
+		<!-- get a small subset of AIR sample files -->
+		<untar src="${basedir}/in/air/mac/AIR Integration Kit.tbz2" compression="bzip2" dest="temp/tmp"/>
+		<copy tofile="temp/samples/descriptor-sample.xml" file="temp/tmp/samples/descriptor-sample.xml"/>
+		<copy todir="temp/samples/icons">
+			<fileset dir="temp/tmp/samples/icons"/>
+		</copy>
+	 	<copy todir="temp/templates/air">
+			<fileset dir="temp/tmp/templates/air"/>
+		</copy>
+		<delete dir="temp/tmp"/>
+		<!-- move antTasks up to an ant dir at the root level -->
+		<copy todir="temp/ant">
+			<fileset dir="modules/antTasks">
+				<include name="build.xml"/>
+				<include name="flexTasks.tasks"/>
+				<include name="README"/>
+				<include name="lib/flexTasks.jar"/>
+				<include name="src/flex/**/*"/>
+			</fileset>
+		</copy>
+		<copy todir="temp/ant/lib">
+			<fileset dir="lib">
+				<include name="flexTasks.jar"/>
+			</fileset>
+		</copy>
+
+		<chmod dir="${basedir}/temp" perm="755" includes="bin/*, **/*.bat, **/*.sh, **/*.linux" />
+
+		<!-- now zip it all up -->
+		<mkdir dir="out"/>
+		<zip destfile="out/flex_sdk_3_mpl.zip" basedir="temp"/>
+	</target>
+
+	<target name="ja-locale-package" description="Zip up flex_sdk_ja.zip">
+		<copy todir="${basedir}/temp">
+			<fileset dir="${basedir}/collateral/ja_JP/">
+				<include name="readme_ja.htm"/>
+				<include name="license-adobesdk_ja.htm"/>
+			</fileset>
+		</copy>
+
+		<!-- frameworks/locale -->
+		<copy todir="${basedir}/temp/frameworks/locale/ja_JP">
+			<fileset file="${basedir}/frameworks/locale/ja_JP/*.swc"/>
+		</copy>
+
+		<!-- frameworks/projects -->
+		<copy todir="${basedir}/temp/frameworks/projects/airframework/bundles/ja_JP">
+			<fileset dir="${basedir}/frameworks/projects/airframework/bundles/ja_JP"/>
+		</copy>
+		<copy todir="${basedir}/temp/frameworks/projects/rpc/bundles/ja_JP">
+			<fileset dir="${basedir}/frameworks/projects/rpc/bundles/ja_JP"/>
+		</copy>
+		<copy todir="${basedir}/temp/frameworks/projects/framework/bundles/ja_JP">
+			<fileset dir="${basedir}/frameworks/projects/framework/bundles/ja_JP"/>
+		</copy>
+
+		<!-- lib -->
+		<copy todir="${basedir}/temp/lib">
+			<fileset dir="${basedir}/lib">
+				<include name="batik_ja.jar"/>
+				<include name="mxmlc_ja.jar"/>
+				<include name="xercesImpl_ja.jar"/>
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name="ja-locale-samples" depends="clean-temp,ja-locale-package">
+		<!-- ja samples -->
+		<copy todir="${basedir}/temp/samples_ja">
+			<fileset dir="${basedir}/samples/ja_JP">
+				<include name="README_ja.txt"/>
+				<include name="explorer/**"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${basedir}/out"/>
+		<zip file="${basedir}/out/flex_sdk_ja.zip" basedir="${basedir}/temp" includes="**"/>
+		<antcall target="clean-temp"/>
+	</target>
+
+	<target name="utilities-package" depends="clean-temp" description="package task that creates utilities.zip">
+		<copy todir="${basedir}/temp">
+			<fileset dir="${basedir}/collateral/en_US">
+				<include name="flex-sdk-description.xml"/>
+			</fileset>
+		</copy>
+
+		<!-- bin -->
+		<copy todir="${basedir}/temp/bin">
+			<fileset dir="${basedir}/bin">
+				<include name="abcdump"/>
+				<include name="abcdump.exe"/>
+				<include name="asc"/>
+				<include name="asc.exe"/>
+				<include name="digest.exe"/>
+				<include name="fcsh"/>
+				<include name="fcsh.exe"/>
+				<include name="KillTest.exe"/>
+				<include name="LocalContentUpdater.exe"/>
+				<include name="swfdump.exe"/>
+				<include name="swfdump"/>
+			</fileset>
+		</copy>
+
+		<!-- frameworks/libs -->
+		<copy todir="${basedir}/temp/frameworks/libs">
+			<fileset dir="${basedir}/frameworks/libs">
+				<include name="**/graphics.swc"/>
+			</fileset>
+		</copy>
+
+		<!-- lib -->
+		<copy todir="${basedir}/temp/lib">
+			<fileset dir="${basedir}/lib">
+				<include name="abcdump.jar"/>
+				<include name="asc.jar"/>
+				<include name="digest.jar"/>
+				<include name="swfdump.jar"/>
+				<include name="fcsh.jar"/>
+			</fileset>
+				</copy>
+		<fixcrlf eol="unix" srcdir="${basedir}/temp/bin" includes="asc,optimizer,swfdump"/>
+
+		<!-- samples -->
+		<copy todir="${basedir}/temp/samples">
+			<fileset dir="${basedir}/samples">
+				<include name="explorer/charts_explorer.xml"/>
+				<include name="explorer/charts/**"/>
+			</fileset>
+		</copy>
+
+		<mkdir dir="${basedir}/out"/>
+		<zip destfile="${basedir}/out/utilities.zip">
+			<zipfileset dir="${basedir}/temp" excludes="bin/*, **/*.bat, **/*.sh, **/*.linux"/>
+			<zipfileset dir="${basedir}/temp" includes="bin/*, **/*.bat, **/*.sh, **/*.linux" filemode="755" />
+		</zip>
+		<antcall target="clean-temp"/>
+	</target>
+
+	<target name="antTasks-package" depends="antTasks,clean-temp">
+		<copy file="${basedir}/modules/antTasks/build.xml-distro"
+			  tofile="${basedir}/temp/build.xml"/>
+		<copy file="${basedir}/modules/antTasks/flexTasks.tasks"
+			  todir="${basedir}/temp"/>
+
+		<!-- lib -->
+		<copy todir="${basedir}/temp/lib">
+			<fileset dir="${basedir}/lib" includes="flexTasks.jar"/>
+		</copy>
+
+		<!-- src -->
+		<copy todir="${basedir}/temp/src">
+			<fileset dir="${basedir}/modules/antTasks/src/"
+				 includes="flex2/**/*.java"
+				 excludes="flex2/ant/AscTasks.java"/>
+		</copy>
+
+		<!-- templates -->
+		<copy todir="${basedir}/temp/templates/html-templates">
+			<fileset dir="${basedir}/templates/html-templates" >
+				<include name="**/*"/>
+                <exclude name="metadata/**"/>
+			</fileset>
+		</copy>
+
+		<mkdir dir="${basedir}/out"/>
+		<zip file="${basedir}/out/flexTasks.zip" basedir="${basedir}/temp"/>
+		<antcall target="clean-temp"/>
+	</target>
+
+	<target name="fcsh-package" depends="clean-temp" description="Zip up fcsh.zip">
+		<copy todir="${basedir}/temp">
+			<fileset dir="${basedir}/modules/compiler">
+				<include name="FlexCompilerShell-license.txt"/>
+			</fileset>
+		</copy>
+
+		<!-- bin -->
+		<copy todir="${basedir}/temp/bin">
+			<fileset dir="${basedir}/bin">
+				<include name="fcsh"/>
+				<include name="fcsh.exe"/>
+			</fileset>
+		</copy>
+		<fixcrlf eol="unix" srcdir="${basedir}/temp/bin" includes="fcsh"/>
+
+		<!-- lib -->
+		<copy todir="${basedir}/temp/lib">
+			<fileset dir="${basedir}/lib">
+				<include name="fcsh.jar"/>
+			</fileset>
+		</copy>
+
+		<mkdir dir="${basedir}/out"/>
+		<zip destfile="${basedir}/out/fcsh.zip">
+			<zipfileset dir="${basedir}/temp" excludes="bin/*, **/*.bat, **/*.sh, **/*.linux"/>
+			<zipfileset dir="${basedir}/temp" includes="bin/*, **/*.bat, **/*.sh, **/*.linux" filemode="755" />
+		</zip>
+		<antcall target="clean-temp"/>
+	</target>
+
+	<target name="air-installers" description="Copy AIR runtime installers from sdk/in to sdk/out">
+		<mkdir dir="${basedir}/out"/>
+		<copy todir="${basedir}/out">
+			<fileset file="${basedir}/in/air/air_version.txt"/>
+			<fileset file="${basedir}/in/air/mac/Adobe AIR.dmg"/>
+			<fileset file="${basedir}/in/air/win/Adobe AIR Installer.exe"/>
+		</copy>
+	</target>
+
+	<target name="clean-temp">
+		<delete dir="${basedir}/temp" failonerror="false" includeEmptyDirs="true"/>
+	</target>
+
+    <!--
+		Tests: The current checkintests that must be run before every checkin
+	-->
+
+	<target name="checkintests" depends="dependencychecker-framework,checkintests-mustella" description="Run these tests before every checkin"/>
+
+    <!--
+		Tests: Mustella checkintests
+	-->
+
+	<target name="checkintests-mustella" depends="mustella-setup,componentsmoke-mustella,checkinapp-mustella"/>
+
+	<target name="mustella-setup" description="compile mustella java file">
+		<property name="moreCompilerArgs" value=""/>
+		<!-- compile the results parser -->
+		<javac srcdir="mustella"/>
+	</target>
+
+	<target name="componentsmoke-mustella" description="run component smoke using mustella">
+	<!-- compile the component smoke  -->
+		<java jar="${basedir}/lib/mxmlc.jar" dir="${frameworks.dir}" fork="true" failonerror="true">
+			<jvmarg line="-ea -DAS3 -DAVMPLUS -Xms32m -Xmx384m -Dsun.io.useCanonCaches=false"/>
+			<arg line="--library-path+=../mustella/mustella.swc -includes=componentSmoke_testScript,ExitWhenDone,SendFormattedResultsToLog ${moreCompilerArgs} tests/componentSmoke/componentSmoke2.mxml"/>
+		</java>
+		<!-- run the component smoke  -->
+		<echo message="launching player and swf"/>
+		<exec executable="${flash.player}" dir="${frameworks.dir}" failonerror="true">
+			<arg line="${basedir}/frameworks/tests/componentSmoke/componentSmoke2.swf"/>
+		</exec>
+		<!-- halt if there was an error -->
+		<antcall target="mustellaresultsparser"/>
+	</target>
+
+	<target name="checkinapp-mustella" description="run checkinapp using mustella">
+		<echo message="compiling checkinapp"/>
+		<!-- compile the checkinapp  -->
+		<java jar="${basedir}/lib/mxmlc.jar" dir="${frameworks.dir}" fork="true" failonerror="true">
+			<jvmarg line="-ea -DAS3 -DAVMPLUS -Xms32m -Xmx384m -Dsun.io.useCanonCaches=false"/>
+			<arg line="--library-path+=../mustella/mustella.swc -includes=checkinapp_testScript,ExitWhenDone,SendFormattedResultsToLog ${moreCompilerArgs} tests/checkinapp/checkinapp.mxml"/>
+		</java>
+		<!-- run the component smoke  -->
+		<echo message="launching player and swf"/>
+		<exec executable="${flash.player}" dir="${frameworks.dir}">
+			<arg line="${frameworks.dir}/tests/checkinapp/checkinapp.swf"/>
+		</exec>
+		<!-- halt if there was an error -->
+		<antcall target="mustellaresultsparser"/>
+	</target>
+
+	<target name="mustellaresultsparser">
+		<java classname="mustella.MustellaResultsParser">
+			<sysproperty key="APPDATA" value="${env.APPDATA}"/>
+			<classpath>
+				<pathelement location="${basedir}"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="clean-dependencychecker" description="Clean up the generated java files from dependency checker">
+        <delete>
+            <fileset dir="${basedir}/tools/dependencychecker" includes="**/*.class"/>
+        </delete>
+    </target>
+
+	<target name="setup-dependencychecker" description="Compile dependency checker java files" depends="clean-dependencychecker">
+		<javac srcdir="${basedir}/tools/dependencychecker" source="1.4" target="1.4"/>
+	</target>
+
+	<target name="dependencychecker-framework" description="Run dependency checker on framework.swc" depends="setup-dependencychecker">
+		<!-- need fork b/c running java from another dir -->
+		<java dir="${basedir}/tools/dependencychecker" fork="true" classname="flex.tools.dependencychecker.DependencyChecker" failonerror="true">
+			<classpath>
+				<pathelement location="${basedir}/tools/dependencychecker"/>
+			</classpath>
+			<arg line="${basedir}/frameworks/libs/framework.swc frameworkSwcExceptionsList.txt"/>
+		</java>
+	</target>
+
+    <!--
+		Tests: Mustella RSL checkintests
+	-->
+
+	<target name="rsl-checkintests" depends="rsl-mustella-setup,componentsmoke-mustella,checkinapp-mustella"/>
+
+	<target name="rsl-mustella-setup" description="compile mustella java file">
+		<!-- <makeurl file="${framework.dir}/rsls/framework_3.0.${build.number}.swf" property="frameworkRslUrl"/> -->
+		<property name="moreCompilerArgs" value="-rslp=libs/framework.swc,../../rsls/framework_${release.version}.${build.number}.swz -target-player=9.0.60"/>
+		<!-- compile the results parser -->
+		<javac srcdir="mustella"/>
+	</target>
+
+
+	<!--
+		Tests: checkintests.war
+	-->
+
+	<target name="checkintests-war-setup">
+		<ant antfile="${qa.dir}/sdk/apps/checkintests/build.xml" inheritAll="false"/>
+	</target>
+
+	<!--
+		Tests: Start tomcat server for running tests in checkintests.war
+	-->
+	<property name="tomcat.dir" value="${basedir}/servers/tomcat5.5.20"/>
+    <target name="startserver" description="Start Tomcat Server">
+       	                  <antcall target="asyncExec_window">
+                            <param name="exec_dir" value="${tomcat.dir}/bin"/>
+                            <param name="exec_title" value="Tomcat started via Flex Automation"/>
+                            <param name="exec" value="'${tomcat.dir}/bin/catalina.bat' run"/>
+                        </antcall>
+    </target>
+
+	<!--
+		Tests: Stop tomcat server used for running tests in checkintests.war
+	-->
+    <target name="stopserver" description="Stop Tomcat Server">
+         <antcall target="asyncExec_window">
+             <param name="exec_dir" value="${tomcat.dir}/bin"/>
+             <param name="exec_title" value="Tomcat started via QA Automation"/>
+             <param name="exec" value="'${tomcat.dir}/bin/catalina.bat' stop"/>
+         </antcall>
+    </target>
+
+        <!--
+    ********************************************************************
+    TARGET: asyncExec_window - run process async w/ window so ant doesn't wait
+            use this on windows
+    ********************************************************************
+    -->
+    <target name="asyncExec_window"
+            description="Asynchronous Exec in a New Window">
+        <exec executable="${tomcat.dir}/bin/antRunAsync" dir="${exec_dir}" vmlauncher="false"
+              failonerror="false" timeout="3000">
+            <env key="ANTRUN_TITLE" value="${exec_title}"/>
+            <!--<env key="ANTRUN_OUTPUT" value="${exec_log}" />-->
+            <arg line="${exec}"/>
+            <!-- actual executable and arguments to run -->
+        </exec>
+        <sleep seconds="2"/>
+        <echo message="leaving target"/>
+    </target>
+
+
+
+	<target name="parseresults">
+		<java classname="utils.TestResultsParser">
+			<classpath>
+				<pathelement location="${qa.dir}/classes"/>
+				<fileset dir="${qa.dir}/lib">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+			<arg line="${qa.dir}/sdk/testsuites/mxunit/reports"/>
+		</java>
+	</target>
+
+
+    <!-- TODO: this could go into a build script in templates, if there is any other template stuff that needs to be done -->
+    <target name="prepare-html-templates" description="prepares files in sdk/templates/**" depends="templates-clean">
+        <!-- AC_OETags.js: Rather than maintaining this in seven different places, just keep and copy one master -->
+        <copy file="${basedir}/templates/html-templates/metadata/AC_OETags.js" todir="${basedir}/templates/html-templates/client-side-detection" />
+        <copy file="${basedir}/templates/html-templates/metadata/AC_OETags.js" todir="${basedir}/templates/html-templates/client-side-detection-with-history" />
+        <copy file="${basedir}/templates/html-templates/metadata/AC_OETags.js" todir="${basedir}/templates/html-templates/express-installation" />
+        <copy file="${basedir}/templates/html-templates/metadata/AC_OETags.js" todir="${basedir}/templates/html-templates/express-installation-with-history" />
+        <copy file="${basedir}/templates/html-templates/metadata/AC_OETags.js" todir="${basedir}/templates/html-templates/no-player-detection"/>
+        <copy file="${basedir}/templates/html-templates/metadata/AC_OETags.js" todir="${basedir}/templates/html-templates/no-player-detection-with-history"/>
+    </target>
+
+</project>

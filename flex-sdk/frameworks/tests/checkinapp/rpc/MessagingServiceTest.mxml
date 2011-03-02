@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" verticalGap="0" creationComplete="run()" >
+
+    <mx:TextArea id="prodFaultOutput" height="100" width="100" visible="true"/>
+    <mx:TextArea id="conFaultOutput" height="100" width="100" visible="true"/>
+    <mx:TextArea id="msgOutput" height="100" width="100" visible="true"/>
+    <mx:Button id="btn1" label="run" click="run()"/>
+    
+
+    <mx:Producer id="pro" destination="MyTopic"
+				 fault="proFault(event)"
+				 acknowledge="msAcknowledge(event)"/>
+    
+	<mx:Consumer id="con" destination ="MyTopic"
+				 fault="conFault(event)"
+				 message="msMessage(event)"/>
+
+    <mx:Script>
+    <![CDATA[
+
+	import mx.messaging.*;
+        import mx.messaging.events.*;
+        import mx.messaging.messages.*;
+        import mx.messaging.config.*;
+
+
+        private var receiveAck:Boolean = false;
+        private var noProFault:Boolean = true;
+        private var noConFault:Boolean = true;
+        private var proFaultString:String = "";
+        private var conFaultString:String = "";
+        private var result:String = "";
+
+        private function run():void
+		{
+            setupPublisher(); 
+            simpleMessageTest();           			
+        }
+
+        private function setupPublisher():void
+        {
+            var channel:Channel = ServerConfig.getChannel("my-polling-amf-ac", false);
+ 			var cs:ChannelSet = new ChannelSet();
+			cs.addChannel(channel);
+			pro.channelSet = cs;
+        }
+
+        private function setupConsumer():void
+        {
+			var channel:Channel = ServerConfig.getChannel("my-polling-amf-ac", false);
+ 			var cs:ChannelSet = new ChannelSet();
+			cs.addChannel(channel);
+            con.channelSet = cs;
+            con.addEventListener(MessageAckEvent.ACKNOWLEDGE, consumerAck);
+            con.subscribe()
+        }
+
+        private function msAcknowledge(MessageAckEvent:Event):void
+        {
+            receiveAck = true;
+        }
+
+        private function consumerAck(event:MessageAckEvent):void
+		{
+            if (event.correlation is CommandMessage && 
+				CommandMessage(event.correlation).operation == CommandMessage.SUBSCRIBE_OPERATION)
+            {
+                var msg:AsyncMessage = new AsyncMessage();
+                msg.body = "TEST PASSED";
+                pro.send(msg);
+            }
+			else
+			{
+                //Assert.fail("Problem with consumer ack"); 
+            }             
+        }
+
+        private function msMessage(event:MessageEvent):void
+        {
+            result = String(event.message.body);
+            prodFaultOutput.text = proFaultString;
+            conFaultOutput.text = conFaultString;
+            msgOutput.text = result;
+            /*Assert.assertTrue("Producer faulted: " + proFaultString, noProFault);
+            Assert.assertTrue("Consumer faulted: " + conFaultString, noConFault);
+            Assert.assertEquals("Wrong message: " + result, "hello", result);
+            Assert.hasPendingTest = false; */
+        }
+
+        private function proFault(event:Object):void // Why kind of event is this?
+        {
+            noProFault = false;
+            proFaultString = event.faultString;
+        }
+
+        private function conFault(event:Object):void // Why kind of event is this?
+        {
+            noConFault = false;
+            conFaultString = event.faultString;
+        }
+
+        public function simpleMessageTest():void
+		{
+
+            setupConsumer();
+        }
+
+    ]]>
+    </mx:Script>  
+
+</mx:VBox>

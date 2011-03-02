@@ -1,0 +1,136 @@
+/*
+////////////////////////////////////////////////////////////////////////////////
+//
+//  ADOBE SYSTEMS INCORPORATED
+//  Copyright 2006 Adobe Systems Incorporated
+//  All Rights Reserved.
+//
+//  NOTICE: Adobe permits you to use, modify, and distribute this file
+//  in accordance with the terms of the license agreement accompanying it.
+//
+////////////////////////////////////////////////////////////////////////////////
+*/
+
+global {
+	theme-color: #3F82A9;
+	font-family:"Tahoma";
+	font-size:11px;
+	color:#111111;
+	symbol-background-color: #C2CCCF;
+}
+
+
+Application {
+	roll-over-color:#D7E4E9;
+	selection-color:#B7CBD2;
+	background-size:"100%";
+	background-color: #6E7D80;
+}
+
+
+Panel {
+	header-height:28;
+	corner-radius:8;
+	header-colors:#C2CCCF,#829194;
+	footer-colors:#C2CCCF,#829194;
+	background-color:#FFFFFF;
+	drop-shadow:"true";
+	shadow-distance:4;
+	border-thickness:0;
+	border-color:#333333;
+	margin-top:0;
+	margin-bottom:0;
+	margin-left:0;
+	margin-right:0;
+}
+
+Alert {
+	header-colors:#C2CCCF,#829194;
+	corner-radius:8;
+}
+
+DataGrid {
+	alternating-row-colors:#FEFEFE,#EFF3F6;
+	border-style:"solid";
+	border-color:#CCCCCC;
+	header-color:#C2CCCF;
+	v-grid-line-color:#CCCCCC;
+	color:#111111;
+	font-size:9px;
+	text-indent:4;
+}
+
+
+Button {
+	color: #FFFFFF;
+	text-roll-over-color: #FFFFFF;
+	font-size: 9px;
+	font-weight: "bold";
+	fill-colors: #4A89B0, #10587A;
+	corner-radius:6;
+	border-color: #10587A;
+	border-thickness:1;
+	highlight-color: #4EA0D0;
+}
+
+
+Accordion {
+	font-size:9px;
+	text-roll-over-color: #111111;
+	font-weight: "bold";
+	border-style: "solid";
+	fill-colors:#C2CCCF, #FFFFFF;
+	selected-fill-colors: #798C90, #C2CCCF;
+	margin-top: -10;
+}
+
+
+NumericStepper {
+	color: #111111;
+	font-size: 9px;
+	font-weight: "bold";
+	fill-colors: #D7DDE2, #CCD3D9;
+	corner-radius: 6;
+	border-style: "inset";
+	border-thickness: 0;
+	border-color: #798C90;
+}
+
+ComboBox {
+	color: #111111;
+	text-roll-over-color: #111111;
+	font-size:9px;
+	font-weight: "bold";
+	fill-colors: #E4E7EA, #C2CCCF;
+	roll-over-color:#D7E4E9;
+	selection-color:#B7CBD2;	
+	background-color: #FEFEFE;	
+	corner-radius: 6;
+	border-thickness: 1;
+	border-color: #798C90;
+	margin-left: 4;
+
+}
+
+
+
+ScrollBar {
+	fill-colors: #E4E7EA, #C2CCCF;
+	border-color: #798C90;
+	corner-radius: 4;
+	track-colors: #4F5D5E, #829194;
+}
+
+HSlider {
+	fill-colors: #E4E7EA, #C2CCCF;
+	track-colors: #829194, #71848A;
+	border-color: #666666;
+	tick-color: #444444;
+	label-offset: -3;
+	tick-offset: -3;
+	show-track-highlight: true;
+}
+
+
+
+

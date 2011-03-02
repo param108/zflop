@@ -1,0 +1,233 @@
+################################################################################
+##
+##  ADOBE SYSTEMS INCORPORATED
+##  Copyright 2006 Adobe Systems Incorporated
+##  All Rights Reserved.
+##
+##  NOTICE: Adobe permits you to use, modify, and distribute this file
+##  in accordance with the terms of the license agreement accompanying it.
+##
+################################################################################
+
+#**
+ *
+ *  embedText: write $text into current output, after registering line mapping to context
+ *
+ *  Note: these line mappings are permanent (they're written to the bytecode as well as
+ *  being used for compile errors).  for compile-error only mappings, see next
+ *
+ *#
+## commented version emits line numbers as comments in the generated code. When using, be sure to uncomment the second (blank) line.
+###macro (embedText $text $origLine)#if ($origLine > 0)$util.mapLines($origLine, $text)/*$origLine>*/#end$text#if ($origLine > 0)/*<$origLine*/
+#macro (embedText $text $origLine)#if ($origLine > 0)$util.mapLines($origLine, $text)#end$text
+#end
+
+package
+{
+import flash.system.Security;
+import flash.text.Font;
+import mx.core.mx_internal;
+import mx.managers.SystemManager;
+import mx.modules.ModuleBase;
+import mx.styles.CSSStyleDeclaration;
+import mx.styles.IStyleModule;
+import mx.styles.StyleManager;
+##
+## imports
+##
+#foreach ($import in $styleModule.imports)
+#embedText("import $import.value;" $import.lineNumber)
+#end
+
+[ExcludeClass]
+public class ${styleModule.name} extends ModuleBase implements IStyleModule
+{
+    /**
+     * @private
+     */
+    private var selectors:Array = [];
+    /**
+     * @private
+     */
+    private var overrideMap:Object = {};
+    /**
+     * @private
+     */
+    private var effectMap:Object = {};
+    /**
+     * @private
+     */
+    private var unloadGlobal:Boolean;
+
+    /**
+     * @private
+     */
+    private static var domainsAllowed:Boolean = allowDomains();
+
+    /**
+     * @private
+     */
+    private static function allowDomains():Boolean
+    {
+		// allowDomain not allowed in AIR
+		if (Security.sandboxType != "application")
+			Security.allowDomain("*");
+        return true;
+    }
+    
+##
+## @Embeds
+##
+#foreach ($atEmbed in $styleModule.atEmbeds)
+    [Embed(#set ($vals = $atEmbed.getAttributes())#foreach( $key in $vals.keySet() )#if ($velocityCount > 1), #end#set ($val = $vals.get($key))$key='$val'#end)]
+    private static var $atEmbed.propName:$atEmbed.type;
+#end
+
+    public function ${styleModule.name}()
+    {
+        var style:CSSStyleDeclaration;
+        var keys:Array;
+        var selector:String;
+        var effects:Array;
+        var addedEffects:Array;
+
+#foreach ($styleDef in $styleModule.styleDefs)
+#if ($styleDef.isTypeSelector() || $styleDef.name == "global")
+        selector = "${styleDef.typeName}";
+#else
+        selector = ".${styleDef.typeName}";
+#end
+
+        style = StyleManager.getStyleDeclaration(selector);
+
+        if (!style)
+        {
+            style = new CSSStyleDeclaration();
+            StyleManager.setStyleDeclaration(selector, style, false);
+            selectors.push(selector);
+        }
+
+        keys = overrideMap[selector];
+
+        if (keys == null)
+        {
+            keys = [];
+            overrideMap[selector] = keys;
+        }
+
+#foreach ($style in $styleDef.styles)
+#embedText("        style.mx_internal::setStyle('${style.name}', ${style.value});" $style.lineNumber)
+        keys.push("${style.name}");
+#end
+
+#if ($styleDef.effectStyles.size() > 0)
+        effects = style.mx_internal::effects;
+
+        if (!effects)
+        {
+            effects = style.mx_internal::effects = new Array();
+        }
+
+        addedEffects = new Array();
+
+#foreach ($effectStyle in $styleDef.effectStyles)
+        effects.push("${effectStyle}");
+        addedEffects.push("${effectStyle}");
+#end
+
+        this.effectMap[selector] = addedEffects;
+#end
+
+#if ($styleDef.name == "global")
+        StyleManager.mx_internal::stylesRoot = null;
+        StyleManager.mx_internal::initProtoChainRoots();
+        unloadGlobal = true;
+#end
+#end
+
+#foreach ($atEmbed in $styleModule.atEmbeds)
+#if ($atEmbed.getAttributes().containsKey("fontName"))
+        Font.registerFont($atEmbed.propName);
+#end
+#end
+    }
+
+    public function unload():void
+    {
+        unloadOverrides();
+        unloadStyleDeclarations();
+
+        if (unloadGlobal)
+        {
+            StyleManager.mx_internal::stylesRoot = null;
+            StyleManager.mx_internal::initProtoChainRoots();
+        }
+    }
+
+    /**
+     * @private
+     */
+    private function unloadOverrides():void
+    {
+        for (var selector:String in overrideMap)
+        {
+            var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration(selector);
+
+            if (style != null)
+            {
+                var keys:Array = overrideMap[selector];
+                var numKeys:int;
+                var i:uint;
+
+                if (keys != null)
+                {
+                    numKeys = keys.length;
+
+                    for (i = 0; i < numKeys; i++)
+                    {
+                        style.mx_internal::clearOverride(keys[i]);
+                    }
+                }
+
+                keys = effectMap[selector];
+
+                if (keys != null)
+                {
+                    numKeys = keys.length;
+                    var index:uint;
+                    var effects:Array = style.mx_internal::effects;
+
+                    for (i = 0; i < numKeys; i++)
+                    {
+                        index = effects.indexOf(numKeys[i]);
+                        if (index >= 0)
+                        {
+                            effects.splice(index, 1);
+                        }
+                    }                    
+                }
+            }
+        }
+
+        overrideMap = null;
+        effectMap = null;
+    }
+
+    /**
+     * @private
+     */
+    private function unloadStyleDeclarations():void
+    {
+        var numSelectors:int = selectors.length;
+
+        for (var i:int = 0; i < numSelectors; i++)
+        {
+            var selector:String = selectors[i];
+            StyleManager.clearStyleDeclaration(selector, false);
+        }
+
+        selectors = null;
+    }
+}
+
+}

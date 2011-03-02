@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<messages>
+  <message id="two">
+    <target locale="en_us">
+      <match variable="formal" pattern="true" text="Hello, " />
+      <match variable="formal" pattern="false">
+        <text value="Hiya, " />
+      </match>
+      <text value="world!" />
+    </target>
+  </message>
+  <message id="three">
+    <target locale="en_us">
+      <text value="There "/>
+      <select>
+        <match variable="count" pattern="0" text="were no" /> 
+        <match variable="count" pattern="1" text="was one" /> 
+        <match variable="count" pattern=".*">
+          <text value="were " />
+          <variable>count</variable>
+        </match>
+      </select>
+      <text value=" file" />
+      <select>
+        <match variable="count" pattern="1" text="." /> 
+        <match variable="count" pattern=".*" text="s." />
+      </select>
+    </target>
+  </message>    
+  
+  <message id="asda" text="lkajsdlkjasd ${filname}" />
+
+
+</messages>

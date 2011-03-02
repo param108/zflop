@@ -1,0 +1,55 @@
+if [ "$1" = "" ]
+   then
+   echo Usage dbgSWF base_directory script_subdirectory script_name options
+   echo e.g. dbgSWF components/ComboBox Styles ComboBoxStyleTester.mxml
+   echo base_directory is relative to $FLEX_HOME/qa/sdk/testsuites/mustella/tests
+   echo options are things like CurrentExcludeList, EnableRemoteImageDiff, CreateBitmapReferences, etc.
+   exit
+fi
+if [ "$2" = "" ]
+   then
+   echo Usage dbgSWF base_directory script_subdirectory script_name options
+   echo e.g. dbgSWF components/ComboBox Styles ComboBoxStyleTester.mxml
+   echo base_directory is relative to $FLEX_HOME/qa/sdk/testsuites/mustella/tests
+   echo options are things like CurrentExcludeList, EnableRemoteImageDiff, CreateBitmapReferences, etc.
+   exit
+fi
+if [ "$3" = "" ]
+   then
+   echo Usage dbgSWF base_directory script_subdirectory script_name options
+   echo e.g. dbgSWF components/ComboBox Styles ComboBoxStyleTester.mxml
+   echo base_directory is relative to $FLEX_HOME/qa/sdk/testsuites/mustella/tests
+   echo options are things like CurrentExcludeList, EnableRemoteImageDiff, CreateBitmapReferences, etc.
+   exit
+fi
+if [ "$4" = "" ]
+   then
+	  options=""
+   else
+      options="-includes=$4"
+fi
+
+cd $FLEX_HOME/qa/sdk/testsuites/mustella/tests
+ls $1
+cd $1
+ls $2
+grep testSWF= $2/$3 >tmp.tmp
+sed 's/^.*testSWF=\"/export MAIN_SWF_NAME=/g' tmp.tmp >tmp2.tmp
+sed s/\".*$//g tmp2.tmp >tmp.tmp
+. tmp.tmp
+echo $MAIN_SWF_NAME
+
+echo $3 >tmp.tmp
+sed s/.mxml//g tmp.tmp >tmp2.tmp
+sed 's/^/export SCRIPT_NAME=/g' tmp2.tmp >tmp.tmp
+. tmp.tmp
+echo $SCRIPT_NAME
+
+rm tmp2.tmp
+rm tmp.tmp
+
+VMARGS="-Xmx384m -Dsun.io.useCanonCaches=false"
+
+java $VMARGS -jar "$FLEX_HOME/sdk/lib/mxmlc.jar" +flexlib="$FLEX_HOME/sdk/frameworks" -debug -allow-source-path-overlap --show-actionscript-warnings=true -strict=true --library-path+=$FLEX_HOME/qa/sdk/testsuites/mustella --source-path="$FLEX_HOME\sdk\frameworks\projects\framework\src,$FLEX_HOME\qa\frameworks\mustella,$FLEX_HOME/qa/sdk/testsuites/mustella/tests/$1/$2,$FLEX_HOME/qa/sdk/testsuites/mustella/tests/$1/SWFs" -includes=$SCRIPT_NAME $options $FLEX_HOME/qa/sdk/testsuites/mustella/tests/$1/SWFs/$MAIN_SWF_NAME 
+
+cd $FLEX_HOME/sdk/mustella

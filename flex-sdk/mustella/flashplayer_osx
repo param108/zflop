@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#/Applications/standalone.app/Contents/MaxOS/standalone
+
+export testcase=`echo Macintosh HD/$1 | sed "s|/|:|g"`
+
+/usr/bin/osascript -e 'tell application "Flash Player" to open alias "'"$testcase"'"'
+
+sleep 15
+

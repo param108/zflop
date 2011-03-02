@@ -1,0 +1,38 @@
+################################################################################
+##
+##  ADOBE SYSTEMS INCORPORATED
+##  Copyright 2005-2006 Adobe Systems Incorporated
+##  All Rights Reserved.
+##
+##  NOTICE: Adobe permits you to use, modify, and distribute this file
+##  in accordance with the terms of the license agreement accompanying it.
+##
+################################################################################
+
+#if ($packageName)
+package $packageName
+#end
+{
+
+import $baseClass;
+#if ($assetType)
+import $assetType;
+#end
+
+#set($len=$embedMap.size())
+[ExcludeClass]
+[Embed(#foreach($eparam in $embedMap.entrySet())$eparam.key="$eparam.value"#if ($len != $velocityCount), #end#end)]
+
+public class $embedClass extends $baseClass 
+{
+    public function $embedClass() 
+    { 
+	    super(); 
+    }
+
+#foreach ($eprop in $embedProps.entrySet())
+    public var $eprop.key:$eprop.value;
+#end
+}
+
+}

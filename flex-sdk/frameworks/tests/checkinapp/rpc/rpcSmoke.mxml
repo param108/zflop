@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"  xmlns="*" xmlns:rpc="*"
+    paddingTop="8"
+    verticalGap="0"
+    height="700"	
+    width="1000">
+
+        <!-- The ActionScript code for this class is externalized in a separate .as file for better readability -->
+    <mx:Script source="rpc_checkinapp_script.as"/>
+    <!--rpc/messaging checkin and smoke tests for the LCDS team -->
+    <rpc:WebServiceTest id="wsSmoke"/>
+    <rpc:RemoteObjectTest id="roSmoke"/>
+    <rpc:HttpServiceTest id="hsSmoke"/>
+    <rpc:MessagingServiceTest id="msSmoke"/>
+    
+</mx:Application>

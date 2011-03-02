@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UnitTester xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" testSWF="main.mxml">
+
+	<!-- this set of lines form a template that must be in each unit test -->
+	<mx:Script>
+	<![CDATA[
+	public static function init(o:DisplayObject):void
+	{
+	}					
+	]]>
+	</mx:Script>
+	<mx:Metadata>
+	<![CDATA[
+		[Mixin]
+	]]>
+	</mx:Metadata>	
+	<!-- end of set of lines that must be in each unit test -->
+
+	<mx:Script>
+	<![CDATA[
+		import mx.core.mx_internal;
+		use namespace mx_internal;
+	]]>
+	</mx:Script>
+
+	<testCases>
+		<TestCase testID="wsSmoke00" keywords="[webServices,rpc]" description="smoke test that validates rpc webservices code plumnbing">
+			<body>
+				<Pause timeout="2000"/>
+				<AssertPropertyValue target="wsSmoke.output" propertyName="text" value="TEST PASSED" />
+			</body>
+		</TestCase>
+
+		<TestCase testID="roSmoke00" keywords="[remoteObject,rpc]" description="smoke test that validates rpc RemoteObject code plumnbing">
+			<body>
+				<Pause timeout="2000"/>
+				<AssertPropertyValue target="roSmoke.output" propertyName="text" value="TEST PASSED" />
+			</body>
+		</TestCase>
+
+		<TestCase testID="hsSmoke00" keywords="[http,rpc]" description="smoke test that validates rpc http service code plumnbing">
+			<body>
+				<Pause timeout="2000"/>
+				<AssertPropertyValue target="hsSmoke.useProxyIsFalseOutput" propertyName="text" value="result" />
+			</body>
+		</TestCase>
+
+		<TestCase testID="msSmoke00" keywords="[messaging,rpc]" description="smoke test that validates rpc messaging (pro/con) code plumnbing">
+			<body>
+				<Pause timeout="2000"/>
+				<AssertPropertyValue target="msSmoke.msgOutput" propertyName="text" value="TEST PASSED" />
+			</body>
+		</TestCase>
+	</testCases>
+</UnitTester>

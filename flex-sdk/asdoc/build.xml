@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2006-2007 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<project name="ASDocs" default="main" basedir=".">
+
+	<property name="sdk.dir" value="${basedir}/.."/>
+	<property name="jvm.args" value="-Dassert -ea -DAS3 -DAVMPLUS -Dapplication.home=${basedir}/.. -Xmx384m -Dsun.io.useCanonCaches=false"/>
+	<property file="${basedir}/build.properties"/>
+
+	<target name="main" depends="clean,doc" description="Clean build of all ASDocs"/>
+
+	<target name="clean" description="Cleans all ASDocs">
+		<delete dir="${basedir}/asdoc-output"/>
+	</target>
+
+	<target name="doc">
+		<java classname="flex2.tools.ASDoc" fork="true" failonerror="true" dir="${basedir}">
+			<jvmarg line="${jvm.args}"/>
+			<classpath>
+				<pathelement location="${sdk.dir}/modules/compiler/classes"/>
+				<fileset dir="${sdk.dir}/lib" includes="*.jar"/>
+			</classpath>
+			<arg line="${asdoc.options}"/>
+		</java>
+	</target>
+
+	<target name="playerglobal-doc">
+		<property file="${playerglobal.dir}/filespecs.properties"/>
+		<java classname="flex2.tools.ASDoc" fork="true" failonerror="true" dir="${playerglobal.dir}">
+			<jvmarg line="${jvm.args}"/>
+			<classpath>
+				<pathelement location="${sdk.dir}/modules/compiler/classes"/>
+				<fileset dir="${sdk.dir}/lib" includes="*.jar"/>
+			</classpath>
+			<arg line="-doc-sources ${flex.filespecs} ${playerglobal.options}"/>
+		</java>
+	</target>
+</project>

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UnitTester xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" testSWF="main.mxml">
+
+	<!-- this set of lines form a template that must be in each unit test -->
+	<mx:Script>
+	<![CDATA[
+	public static function init(o:DisplayObject):void
+	{
+	}					
+	]]>
+	</mx:Script>
+	<mx:Metadata>
+	<![CDATA[
+		[Mixin]
+	]]>
+	</mx:Metadata>	
+	<!-- end of set of lines that must be in each unit test -->
+
+	<mx:Script>
+	<![CDATA[
+		import mx.core.mx_internal;
+		use namespace mx_internal;
+	]]>
+	</mx:Script>
+
+	<testCases>
+<!--
+-->
+		<TestCase testID="SelectWirelessAntenna">
+			<body>
+				<RunCode code="application.thumbView.myTile.validateNow()" />
+				<DispatchMouseEvent target="thumbView.myTile" type="mouseOver" localX="415" localY="429" />
+				<DispatchMouseClickEvent target="thumbView.myTile" localX="415" localY="429" waitEvent="change" waitTarget="thumbView.myTile" />
+				<AssertPropertyValue target="thumbView.myTile" propertyName="selectedIndex" value="15" />
+				<AssertPropertyValue target="thumbView.myTile.mx_internal:rendererArray.3.3._ProductThumbnail_Label1" propertyName="text" value="Wireless Antenna" />
+				<AssertPropertyValue target="productDetail._ProductDetail_Label1" propertyName="text" value="Wireless Antenna" />
+				<AssertPropertyValue target="productDetail.itemImage" propertyName="source" value="assets/products/cantena.jpg" />
+			</body>
+		</TestCase>
+		<TestCase testID="DragWirelessAntenna">
+			<body>
+				<DispatchMouseEvent target="thumbView.myTile" type="mouseDown"  localX="415" localY="429" buttonDown="true" />
+ 				<DispatchMouseEvent target="thumbView.myTile" type="mouseMove" buttonDown="true" localX="425" localY="435" waitTarget="thumbView.myTile" waitEvent="dragStart" />
+ 				<DispatchMouseEvent target="stage" type="mouseMove" buttonDown="true" stageX="501" stageY="479" 
+									waitTarget="mx.managers::DragManager.mx_internal:dragProxy" waitEvent="move"/>
+ 				<DispatchMouseEvent target="stage" type="mouseMove" buttonDown="true" stageX="551" stageY="477" 
+									waitTarget="mx.managers::DragManager.mx_internal:dragProxy" waitEvent="move"/>
+ 				<DispatchMouseEvent target="stage" type="mouseMove" buttonDown="true" stageX="572" stageY="471" 
+									waitTarget="mx.managers::DragManager.mx_internal:dragProxy" waitEvent="move"/>
+ 				<DispatchMouseEvent target="stage" type="mouseMove" buttonDown="true" stageX="590" stageY="469" 
+									waitTarget="cartView.dg" waitEvent="dragEnter" />
+ 				<DispatchMouseEvent target="stage" type="mouseMove" buttonDown="true" stageX="620" stageY="469" 
+									waitTarget="mx.managers::DragManager.mx_internal:dragProxy" waitEvent="move"/>
+ 				<DispatchMouseEvent target="stage" type="mouseMove" buttonDown="true" stageX="628" stageY="469"
+ 									waitTarget="mx.managers::DragManager.mx_internal:dragProxy" waitEvent="move"/>
+ 				<DispatchMouseEvent target="stage" type="mouseUp" stageX="628" stageY="469" waitTarget="cartView.dg" waitEvent="dragDrop" />
+				<AssertEvent target="thumbView.myTile" eventName="dragComplete" eventClass="mx.events::DragEvent" />
+				<AssertPropertyValue target="cartView.dg.dataProvider" propertyName="length" value="1" />
+			</body>
+			<cleanup>
+				<!-- Pause while drop effect finishes playing -->
+				<Pause timeout="250" />
+			</cleanup>
+		</TestCase>
+		<TestCase testID="VerifyDrop1">
+			<body>
+				<AssertPropertyValue target="cartView.dg.mx_internal:rendererArray.1.0" propertyName="text" value="Wireless Antenna" />
+			</body>
+		</TestCase>
+		<TestCase testID="DragTrackerPod">
+			<body>
+				<DispatchMouseEvent target="thumbView.myTile" type="mouseOver"  localX="429" localY="295" />
+				<DispatchMouseEvent target="thumbView.myTile" type="mouseDown"  localX="429" localY="295" buttonDown="true" />
+ 				<DispatchMouseEvent target="thumbView.myTile" type="mouseMove" buttonDown="true" localX="439" localY="305" waitTarget="thumbView.myTile" waitEvent="dragStart" />
+ 				<DispatchMouseEvent target="stage" type="mouseMove" buttonDown="true" stageX="520" stageY="394" 
+									waitTarget="mx.managers::DragManager.mx_internal:dragProxy" waitEvent="move"/>
+ 				<DispatchMouseEvent target="stage" type="mouseMove" buttonDown="true" stageX="558" stageY="419" 
+									waitTarget="mx.managers::DragManager.mx_internal:dragProxy" waitEvent="move"/>
+ 				<DispatchMouseEvent target="stage" type="mouseMove" buttonDown="true" stageX="570" stageY="435" 
+									waitTarget="mx.managers::DragManager.mx_internal:dragProxy" waitEvent="move"/>
+ 				<DispatchMouseEvent target="stage" type="mouseMove" buttonDown="true" stageX="595" stageY="466" 
+									waitTarget="cartView.dg" waitEvent="dragEnter" />
+ 				<DispatchMouseEvent target="stage" type="mouseMove" buttonDown="true" stageX="620" stageY="469" 
+									waitTarget="mx.managers::DragManager.mx_internal:dragProxy" waitEvent="move"/>
+ 				<DispatchMouseEvent target="stage" type="mouseMove" buttonDown="true" stageX="630" stageY="469"
+ 									waitTarget="mx.managers::DragManager.mx_internal:dragProxy" waitEvent="move"/>
+ 				<DispatchMouseEvent target="stage" type="mouseUp" stageX="630" stageY="469" waitTarget="cartView.dg" waitEvent="dragDrop" />
+				<AssertEvent target="thumbView.myTile" eventName="dragComplete" eventClass="mx.events::DragEvent" />
+				<AssertPropertyValue target="cartView.dg.dataProvider" propertyName="length" value="2" />
+			</body>
+			<cleanup>
+				<!-- Pause while drop effect finishes playing -->
+				<Pause timeout="250" />
+			</cleanup>
+		</TestCase>
+		<TestCase testID="VerifyDrop2">
+			<body>
+				<AssertPropertyValue target="cartView.dg.mx_internal:rendererArray.1.0" propertyName="text" value="Wireless Antenna" />
+				<AssertPropertyValue target="cartView.dg.mx_internal:rendererArray.2.0" propertyName="text" value="TrackerPod" />
+			</body>
+		</TestCase>
+		<TestCase testID="SortCartByPrice">
+			<body>
+				<DispatchMouseEvent target="cartView.dg.mx_internal:rendererArray.0.2" type="mouseOver" localX="10" localY="10" />
+				<DispatchMouseClickEvent target="cartView.dg.mx_internal:rendererArray.0.2" localX="10" localY="10" />
+				<AssertEvent target="cartView.dg" eventName="updateComplete" eventClass="mx.events::FlexEvent" />
+				<AssertPropertyValue target="cartView.dg.mx_internal:rendererArray.1.0" propertyName="text" value="Wireless Antenna" />
+				<AssertPropertyValue target="cartView.dg.mx_internal:rendererArray.2.0" propertyName="text" value="TrackerPod" />
+				<AssertPropertyValue target="cartView.dg.mx_internal:sortArrow" propertyName="x" 
+						valueExpression="value=application.cartView.dg.rendererArray[0][2].x + application.cartView.dg.rendererArray[0][2].width" />
+			</body>
+		</TestCase>
+		<TestCase testID="SortCartByPrice2">
+			<body>
+				<DispatchMouseClickEvent target="cartView.dg.mx_internal:rendererArray.0.2" localX="10" localY="10" />
+				<AssertEvent target="cartView.dg" eventName="updateComplete" eventClass="mx.events::FlexEvent" />
+				<AssertPropertyValue target="cartView.dg.mx_internal:rendererArray.1.0" propertyName="text" value="TrackerPod" />
+				<AssertPropertyValue target="cartView.dg.mx_internal:rendererArray.2.0" propertyName="text" value="Wireless Antenna" />
+				<AssertPropertyValue target="cartView.dg.mx_internal:sortArrow" propertyName="x" 
+						valueExpression="value=application.cartView.dg.rendererArray[0][2].x + application.cartView.dg.rendererArray[0][2].width" />
+			</body>
+		</TestCase>
+		<TestCase testID="SortViewByPrice">
+			<body>
+				<!-- the combobox really should have its own id -->
+				<DispatchMouseEvent target="thumbCtrl.getChildAt(3)" type="mouseOver" localX="10" localY="10" />
+				<DispatchMouseClickEvent target="thumbCtrl.getChildAt(3)" localX="10" localY="10" waitEvent="open" waitTarget="thumbCtrl.getChildAt(3)" />
+				<DispatchMouseEvent target="thumbCtrl.getChildAt(3).dropdown" type="mouseOver" localX="10" localY="30" />
+				<DispatchMouseClickEvent target="thumbCtrl.getChildAt(3).dropdown" localX="10" localY="30" waitEvent="close" waitTarget="thumbCtrl.getChildAt(3)" />
+				<AssertEvent target="thumbCtrl.getChildAt(3)" eventName="change" eventClass="mx.events::ListEvent" />
+				<AssertPropertyValue target="thumbCtrl.getChildAt(3)" propertyName="selectedItem" value="Price" /> 
+				<AssertEvent target="thumbView.myTile" eventName="updateComplete" eventClass="mx.events::FlexEvent" />
+				<AssertPropertyValue target="thumbView.myTile.mx_internal:rendererArray.3.3._ProductThumbnail_Label1" propertyName="text" value="Ambient Orb" />
+				<AssertPropertyValue target="thumbView.myTile.mx_internal:rendererArray.0.0._ProductThumbnail_Label1" propertyName="text" value="Caffeinated Sauce" />
+			</body>
+		</TestCase>
+		<TestCase testID="UseSliderToFilterOutHighPrices">
+			<body>
+				<DispatchMouseEvent target="priceSlider" type="mouseOver" localX="145" localY="32" />
+				<DispatchMouseEvent target="priceSlider" type="mouseDown" localX="145" localY="32" />
+				<DispatchMouseEvent target="priceSlider" type="mouseMove" localX="130" localY="32" />
+				<DispatchMouseEvent target="priceSlider" type="mouseMove" localX="105" localY="32" />
+				<DispatchMouseEvent target="priceSlider" type="mouseMove" localX="96" localY="32" />
+				<DispatchMouseEvent target="priceSlider" type="mouseUp" localX="96" localY="32" />
+				<!-- Pause while fade effect finishes playing -->
+				<Pause timeout="350" />
+				<AssertPropertyValue target="thumbView.myTile.mx_internal:rendererArray.3.3.image" propertyName="alpha" value="0.09765625" />
+				<AssertPropertyValue target="thumbView.myTile.mx_internal:rendererArray.3.0.image" propertyName="alpha" value="0.09765625" />
+				<AssertPropertyValue target="thumbView.myTile.mx_internal:rendererArray.2.3.image" propertyName="alpha" value="0.09765625" />
+				<AssertPropertyValue target="thumbView.myTile.mx_internal:rendererArray.2.2.image" propertyName="alpha" value="1" />
+			</body>
+		</TestCase>
+		<TestCase testID="GoToCheckoutView">
+			<body>
+				<DispatchMouseEvent target="cartView._CartView_Button2" type="mouseOver" localX="10" localY="10" />
+				<DispatchMouseClickEvent target="cartView._CartView_Button2" localX="10" localY="10" waitEvent="updateComplete" waitTarget="bodyStack" />
+				<AssertPropertyValue target="checkoutView" propertyName="visible" value="true" />
+				<AssertPropertyValue target="thumbView" propertyName="visible" value="false" />
+			</body>
+		</TestCase>
+		<TestCase testID="ChangeStateToArkansasUsingScrollbar1">
+			<body>
+				<DispatchMouseEvent target="checkoutView.state._StatePicker_ComboBox1" type="mouseOver" localX="10" localY="10" />
+				<DispatchMouseClickEvent target="checkoutView.state._StatePicker_ComboBox1" localX="10" localY="10" waitEvent="open" waitTarget="checkoutView.state._StatePicker_ComboBox1" />
+				<DispatchMouseEvent target="checkoutView.state._StatePicker_ComboBox1.dropdown" type="mouseOver" localX="192" localY="93" />
+				<DispatchMouseClickEvent target="checkoutView.state._StatePicker_ComboBox1.dropdown" localX="192" localY="93" waitEvent="scroll" waitTarget="checkoutView.state._StatePicker_ComboBox1.dropdown" />
+				<AssertPropertyValue target="checkoutView.state._StatePicker_ComboBox1.dropdown.mx_internal:rendererArray.4.0.listData" propertyName="label" value="Arkansas" />
+			</body>
+		</TestCase>
+		<TestCase testID="ChangeStateToArkansasUsingScrollbar2">
+			<body>
+				<DispatchMouseEvent target="checkoutView.state._StatePicker_ComboBox1.dropdown" type="mouseOver" localX="12" localY="93" />
+				<DispatchMouseClickEvent target="checkoutView.state._StatePicker_ComboBox1.dropdown" localX="12" localY="93" waitEvent="close" waitTarget="checkoutView.state._StatePicker_ComboBox1" />
+				<AssertPropertyValue target="checkoutView.state._StatePicker_ComboBox1.selectedItem" propertyName="name" value="Arkansas" />
+			</body>
+		</TestCase>
+		<TestCase testID="ChangeStateToAlaskaUsingScrollbar1">
+			<body>
+				<DispatchMouseEvent target="checkoutView.state._StatePicker_ComboBox1" type="mouseOver" localX="10" localY="10" />
+				<DispatchMouseClickEvent target="checkoutView.state._StatePicker_ComboBox1" localX="10" localY="10" waitEvent="open" waitTarget="checkoutView.state._StatePicker_ComboBox1" />
+				<DispatchMouseEvent target="checkoutView.state._StatePicker_ComboBox1.dropdown" type="mouseOver" localX="192" localY="10" />
+				<DispatchMouseClickEvent target="checkoutView.state._StatePicker_ComboBox1.dropdown" localX="192" localY="10" waitEvent="scroll" waitTarget="checkoutView.state._StatePicker_ComboBox1.dropdown" />
+				<AssertPropertyValue target="checkoutView.state._StatePicker_ComboBox1.dropdown.mx_internal:rendererArray.0.0.listData" propertyName="label" value="Alaska" />
+			</body>
+		</TestCase>
+		<TestCase testID="ChangeStateToAlaskaUsingScrollbar2">
+			<body>
+				<DispatchMouseEvent target="checkoutView.state._StatePicker_ComboBox1.dropdown" type="mouseOver" localX="12" localY="10" />
+				<DispatchMouseClickEvent target="checkoutView.state._StatePicker_ComboBox1.dropdown" localX="12" localY="10" waitEvent="close" waitTarget="checkoutView.state._StatePicker_ComboBox1" />
+				<AssertPropertyValue target="checkoutView.state._StatePicker_ComboBox1.selectedItem" propertyName="name" value="Alaska" />
+			</body>
+		</TestCase>
+		<TestCase testID="ChangeAccordionToShippingInfo">
+			<body>
+				<DispatchMouseEvent target="checkoutView.accordion" type="mouseOver" localX="269" localY="318" />
+				<DispatchMouseClickEvent target="checkoutView.accordion" localX="269" localY="318" />
+				<AssertEvent target="checkoutView.accordion" eventName="updateComplete" eventClass="mx.events::FlexEvent" numExpectedEvents="2" />
+				<AssertPropertyValue target="checkoutView.accordion.getChildAt(0)" propertyName="visible" value="false" />
+				<AssertPropertyValue target="checkoutView.accordion.getChildAt(1)" propertyName="visible" value="true" />
+			</body>
+		</TestCase>
+		<TestCase testID="ShipViaUPS">
+			<body>
+				<DispatchMouseEvent target="checkoutView.rbOption.1" type="mouseOver" localX="10" localY="7" />
+				<DispatchMouseClickEvent target="checkoutView.rbOption.1" localX="10" localY="7" waitEvent="change" waitTarget="checkoutView.shippingButtons" />
+				<AssertPropertyValue target="checkoutView.rbOption.0" propertyName="selected" value="false" />
+				<AssertPropertyValue target="checkoutView.rbOption.1" propertyName="selected" value="true" />
+				<AssertPropertyValue target="checkoutView.orderSummary.getChildAt(2).getChildAt(1).getChildAt(0)" propertyName="text" value="$12.99" />
+			</body>
+		</TestCase>
+		<TestCase testID="ShipViaUSPS">
+			<body>
+				<DispatchMouseEvent target="checkoutView.rbOption.0" type="mouseOver" localX="10" localY="7" />
+				<DispatchMouseClickEvent target="checkoutView.rbOption.0" localX="10" localY="7" waitEvent="change" waitTarget="checkoutView.shippingButtons" />
+				<AssertPropertyValue target="checkoutView.rbOption.0" propertyName="selected" value="true" />
+				<AssertPropertyValue target="checkoutView.rbOption.1" propertyName="selected" value="false" />
+				<AssertPropertyValue target="checkoutView.orderSummary.getChildAt(2).getChildAt(1).getChildAt(0)" propertyName="text" value="$5.99" />
+			</body>
+		</TestCase>
+		<TestCase testID="CompletePurchaseVerifyAlert">
+			<body>
+				<DispatchMouseEvent target="checkoutCtrl" type="mouseOver" localX="12" localY="10" />
+				<DispatchMouseClickEvent target="checkoutCtrl" localX="12" localY="10" waitEvent="effectEnd" waitTarget="" />
+				<!-- verify that modal window obscured app -->
+				<AssertPixelValue target="main" x="83" y="543" value="0xBEC4C8" />
+				<AssertPropertyValue target="systemManager.rawChildren.getChildAt(3).mx_internal:alertForm.mx_internal:textField" propertyName="text" value="Thank you for your order." />
+			</body>
+		</TestCase>
+		<TestCase testID="VerifyModalWindow">
+			<body>
+				<DispatchMouseEvent target="productDetail.qty" type="mouseOver" localX="29" localY="6" />
+				<DispatchMouseClickEvent target="productDetail.qty" localX="29" localY="6" />
+				<!-- verify that modal window obscured app and didn't change numeric stepper -->
+				<AssertPropertyValue target="productDetail.qty" propertyName="value" value="1" />
+			</body>
+		</TestCase>
+		<TestCase testID="CompletePurchaseVerifyAlertAfterOK">
+			<body>
+				<DispatchMouseEvent target="systemManager.rawChildren.getChildAt(3).mx_internal:alertForm.mx_internal:buttons.0" type="mouseOver" localX="12" localY="10" />
+				<DispatchMouseClickEvent target="systemManager.rawChildren.getChildAt(3).mx_internal:alertForm.mx_internal:buttons.0" localX="12" localY="10" waitEvent="effectEnd" waitTarget="" />
+				<!-- verify that modal window is gone -->
+				<AssertPixelValue target="main" x="83" y="543" value="0x9FACB3" />
+				<!-- verify that there are two effects as the modal window goes away -->
+				<AssertEvent target="" eventName="effectEnd" eventClass="mx.events::EffectEvent" numExpectedEvents="2" />
+			</body>
+		</TestCase>
+		<TestCase testID="VerifyModalWindowGone">
+			<body>
+				<DispatchMouseEvent target="productDetail.qty" type="mouseOver" localX="27" localY="4" />
+				<DispatchMouseClickEvent target="productDetail.qty" localX="27" localY="4" />
+				<!-- verify that modal window is gone and numeric stepper changed -->
+				<AssertPropertyValue target="productDetail.qty" propertyName="value" value="2" />
+			</body>
+		</TestCase>
+	</testCases>
+</UnitTester>

@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" verticalGap="0" creationComplete="run()" >
+
+    <mx:TextArea id="output" height="200" width="200" visible="true"/>
+        
+    <mx:WebService id="_service" 
+	destination="echoService"
+        load="onServiceLoad(event)"
+        fault="onServiceFault(event)"
+        useProxy="true">
+           <mx:operation name="echoString" fault="onFault(event)" result="onResult(event)"/>
+    </mx:WebService>
+
+    <mx:Script>
+        <![CDATA[
+            import mx.rpc.events.*;
+            public var fault:Object;
+            public var result:Object;
+            public var events:Array = [];
+            
+            private function onServiceLoad(event:Event):void 
+            {
+                events.push("service load");
+            }
+            
+            private function onServiceFault(event:FaultEvent):void 
+            {
+                fault = event.fault;
+                events.push("service fault");
+                output.text += "-> Service fault: " + event.fault.faultCode + " - " + event.fault.faultString + ".\n";
+            }
+            
+            private function onFault(event:FaultEvent):void 
+            {
+                fault = event.fault;
+                events.push("operation fault");
+                output.text += "-> Operation fault: " + event.fault.faultCode + " - " + event.fault.faultString + ".\n";
+            }
+            
+            private function onResult(event:ResultEvent):void 
+            {
+                result = event.result;
+                events.push("operation result");
+                output.text += event.result.toString();
+            }
+            
+            private function run():void 
+            {
+                var s:String = "TEST PASSED";
+                _service.echoString.request.inputString = s;
+                _service.echoString.send();
+            }
+        ]]>
+    </mx:Script>
+</mx:VBox>

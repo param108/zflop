@@ -1,0 +1,30 @@
+################################################################################
+##
+##  ADOBE SYSTEMS INCORPORATED
+##  Copyright 2005 Adobe Systems Incorporated
+##  All Rights Reserved.
+##
+##  NOTICE: Adobe permits you to use, modify, and distribute this file
+##  in accordance with the terms of the license agreement accompanying it.
+##
+################################################################################
+
+package 
+{
+
+import flash.display.Sprite;
+import mx.core.IFlexModuleFactory;
+
+public class _FontFaceRules extends Sprite
+{
+#foreach ($atEmbed in $atEmbeds)
+    [Embed(#set ($vals = $atEmbed.getAttributes())#foreach( $key in $vals.keySet() )#if ($velocityCount > 1), #end#set ($val = $vals.get($key))$key='$val'#end)]
+    private static var $atEmbed.propName:$atEmbed.type;
+#end
+
+    public static function init(fbs:IFlexModuleFactory):void
+    {
+    }
+}
+
+}

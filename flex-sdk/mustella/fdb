@@ -1,0 +1,34 @@
+if [ "$1" = "" ]
+   then
+   echo Usage dbgSWF base_directory script_subdirectory script_name
+   echo e.g. dbgSWF components/ComboBox Styles ComboBoxStyleTester.mxml
+   echo base_directory is relative to $FLEX_HOME/qa/sdk/testsuites/mustella/tests
+   exit
+fi
+if [ "$2" = "" ]
+   then
+   echo Usage dbgSWF base_directory script_subdirectory script_name
+   echo e.g. dbgSWF components/ComboBox Styles ComboBoxStyleTester.mxml
+   echo base_directory is relative to $FLEX_HOME/qa/sdk/testsuites/mustella/tests
+   exit
+fi
+
+cd $FLEX_HOME/qa/sdk/testsuites/mustella/tests
+ls $1
+cd $1
+ls $2
+grep testSWF= $2/$3 >tmp.tmp
+sed 's/^.*testSWF=\"/export MAIN_SWF_NAME=/g' tmp.tmp >tmp2.tmp
+sed s/\".*$//g tmp2.tmp >tmp.tmp
+sed s/.mxml/.swf/g tmp.tmp >tmp2.tmp
+. tmp2.tmp
+echo $MAIN_SWF_NAME
+
+rm tmp2.tmp
+rm tmp.tmp
+
+VMARGS="-Xmx384m -Dsun.io.useCanonCaches=false -Dapplication.home=$FLEX_HOME/sdk"
+
+java $VMARGS -jar "$FLEX_HOME/sdk/lib/fdb.jar" $FLEX_HOME/qa/sdk/testsuites/mustella/tests/$1/SWFs/$MAIN_SWF_NAME
+
+cd $FLEX_HOME/sdk/mustella

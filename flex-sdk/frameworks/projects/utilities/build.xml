@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2006-2007 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<project name="utilities" default="main" basedir=".">
+
+	<property name="FLEX_HOME" location="${basedir}/../../.."/>
+	<property file="${FLEX_HOME}/build.properties"/>
+
+    <!-- If you change this, update <target-player/> in the <compc/> tasks. -->
+    <property name="local.playerglobal.version" value="9"/>  
+
+	<target name="main" depends="clean,compile" description="Clean build of utilities.swc"/>
+
+	<target name="clean">
+		<delete failonerror="false">
+			<fileset file="${basedir}/bundles.properties"/>
+			<fileset dir="${FLEX_HOME}/frameworks/libs">
+				<include name="utilities.swc"/>
+				<include name="utilities.swc.incr"/>
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="compile" description="Compiles utilities.swc">
+		<echo message="Compiling frameworks/libs/utilities.swc"/>
+		<!-- Load the <compc> task. We can't do this at the <project> level -->
+		<!-- because targets that run before flexTasks.jar gets built would fail. -->
+		<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/lib/flexTasks.jar"/>
+		<!--
+			This project has no MXML tags and therefore no manifest.
+			Link in the classes (and their dependencies)
+			listed in UtilitiesClasses.as.
+			Link in accessibility support.
+			Don't put any resources into the SWC.
+			Write a bundle list of referenced resource bundles
+			into the file bundles.properties in this directory.
+			(This should be an empty list.)
+		-->
+		<compc fork="true"
+			   output="${FLEX_HOME}/frameworks/libs/utilities.swc"
+			   resource-bundle-list="${basedir}/bundles.properties">
+            <!-- If you change this, update ${local.playerglobal.version} above. -->
+            <target-player>9</target-player>
+			<jvmarg line="${compc.jvm.args}"/>
+			<include-classes>UtilitiesClasses</include-classes>
+			<source-path path-element="${basedir}/src"/>
+			<library-path dir="${basedir}/libs">
+				<include name="FlexContentHolder.swc"/>
+			</library-path>
+            <external-library-path dir="${FLEX_HOME}/frameworks/libs">
+                <include name="player/${local.playerglobal.version}/playerglobal.swc"/>
+				<include name="framework.swc"/>
+			</external-library-path>
+			<locale/>
+			<accessible>true</accessible>
+		</compc>
+	</target>
+
+</project>

@@ -1,0 +1,2 @@
+apollo\Main\20090721ap\mac\results\Release\installers
+apollo\Main\20090721ap\win\results\Release\installers
