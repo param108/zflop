@@ -1577,9 +1577,63 @@ XMLElementContent
         return result;
     }
 
+	/* ProfilerExpression */
+    public StatementListNode wrapFunctionBlock(StatementListNode block)
+	{
+			/*
+			Node traceName = nodeFactory.memberExpression(null, nodeFactory.getExpression(nodeFactory.identifier("trace")));
+
+			StatementListNode traces = nodeFactory.statementList(null, nodeFactory.callExpression(traceName, nodeFactory.argumentList(null, nodeFactory.literalString("Entry into " + methodName))));
+			third = nodeFactory.statementList(traces, third);
+			*/
+
+			if(current_class_name != "Profiler")
+			{
+				Node enterFunction = nodeFactory.memberExpression(nodeFactory.identifier("Profiler"), nodeFactory.getExpression(nodeFactory.identifier("enterFunction")));
+
+
+				ArgumentListNode args = nodeFactory.argumentList(null, nodeFactory.literalString(" " /* nodeFactory.current_package*/));
+				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_class_name));
+				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_method_name));
+
+				StatementListNode callEnterFunction = nodeFactory.statementList(null, nodeFactory.callExpression(enterFunction, args));
+
+				block = nodeFactory.statementList(callEnterFunction, block);
+
+
+				Node exitFunction = nodeFactory.memberExpression(nodeFactory.identifier("Profiler"), nodeFactory.getExpression(nodeFactory.identifier("exitFunction")));
+
+				StatementListNode callExitFunction = nodeFactory.statementList(null, nodeFactory.callExpression(exitFunction, args)); 
+				block = nodeFactory.statementList(block, callExitFunction);
+			}
+
+			return block;
+	}
+
+    public Node wrapFunctionReturn(Node ret)
+	{
+			if(current_class_name != "Profiler")
+			{
+
+				ArgumentListNode args = nodeFactory.argumentList(null, nodeFactory.literalString(" " /* nodeFactory.current_package*/));
+				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_class_name));
+				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_method_name));
+
+				Node exitFunction = nodeFactory.memberExpression(nodeFactory.identifier("Profiler"), nodeFactory.getExpression(nodeFactory.identifier("exitFunction")));
+	
+				StatementListNode callExitFunction = nodeFactory.statementList(null, nodeFactory.callExpression(exitFunction, args));
+				ret = nodeFactory.statementList(callExitFunction, ret);
+			}
+			
+			return ret;
+	}
+
+
     /*
      * FunctionExpression
      */
+
+	public String current_method_name = null;
 
     public FunctionCommonNode parseFunctionCommon(IdentifierNode first)
     {
@@ -1620,7 +1674,17 @@ XMLElementContent
 
         if (lookahead(LEFTBRACE_TOKEN))
         {
+        	int ln  = scanner.input.markLn + 1;
+			String file = scanner.input.origin;
+			int i = 0;
+			if((i = file.lastIndexOf(File.separatorChar)) != -1)
+			{
+				file = file.substring(i+1);
+			}
+			current_method_name = (first != null ? first.name : "<anonymous>");
+			current_method_name = current_method_name + "@" + (file + ":" +ln);
             third = parseBlock();
+			third = wrapFunctionBlock(third);
 
             if (!AVMPLUS)
             {
@@ -4964,6 +5028,8 @@ XMLElementContent
         }
 
         result = nodeFactory.returnStatement(first, ctx.input.positionOfMark());
+
+		result = wrapFunctionReturn(result);
 
         if (debug)
         {
