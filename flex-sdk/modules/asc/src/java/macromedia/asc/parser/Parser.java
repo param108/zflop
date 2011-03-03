@@ -1587,9 +1587,13 @@ XMLElementContent
 			third = nodeFactory.statementList(traces, third);
 			*/
 
-			if(current_class_name != "Profiler")
+			String profiler_class = System.getProperty("zynga.flex.profiler");
+
+			if(profiler_class == null) return block;
+
+			if(!profiler_class.equals(current_class_name))
 			{
-				Node enterFunction = nodeFactory.memberExpression(nodeFactory.identifier("Profiler"), nodeFactory.getExpression(nodeFactory.identifier("enterFunction")));
+				Node enterFunction = nodeFactory.memberExpression(nodeFactory.identifier(profiler_class), nodeFactory.getExpression(nodeFactory.identifier("enterFunction")));
 
 
 				ArgumentListNode args = nodeFactory.argumentList(null, nodeFactory.literalString(" " /* nodeFactory.current_package*/));
@@ -1601,7 +1605,7 @@ XMLElementContent
 				block = nodeFactory.statementList(callEnterFunction, block);
 
 
-				Node exitFunction = nodeFactory.memberExpression(nodeFactory.identifier("Profiler"), nodeFactory.getExpression(nodeFactory.identifier("exitFunction")));
+				Node exitFunction = nodeFactory.memberExpression(nodeFactory.identifier(profiler_class), nodeFactory.getExpression(nodeFactory.identifier("exitFunction")));
 
 				StatementListNode callExitFunction = nodeFactory.statementList(null, nodeFactory.callExpression(exitFunction, args)); 
 				block = nodeFactory.statementList(block, callExitFunction);
@@ -1612,14 +1616,18 @@ XMLElementContent
 
     public Node wrapFunctionReturn(Node ret)
 	{
-			if(current_class_name != "Profiler")
+			String profiler_class = System.getProperty("zynga.flex.profiler");
+
+			if(profiler_class == null) return ret;
+
+			if(!profiler_class.equals(current_class_name))
 			{
 
 				ArgumentListNode args = nodeFactory.argumentList(null, nodeFactory.literalString(" " /* nodeFactory.current_package*/));
 				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_class_name));
 				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_method_name));
 
-				Node exitFunction = nodeFactory.memberExpression(nodeFactory.identifier("Profiler"), nodeFactory.getExpression(nodeFactory.identifier("exitFunction")));
+				Node exitFunction = nodeFactory.memberExpression(nodeFactory.identifier(profiler_class), nodeFactory.getExpression(nodeFactory.identifier("exitFunction")));
 	
 				StatementListNode callExitFunction = nodeFactory.statementList(null, nodeFactory.callExpression(exitFunction, args));
 				ret = nodeFactory.statementList(callExitFunction, ret);
