@@ -1578,6 +1578,30 @@ XMLElementContent
     }
 
 	/* ProfilerExpression */
+	public StatementListNode generateImports(String profiler_class)
+	{
+		String pkgs[] = profiler_class.split("\\.");
+		PackageIdentifiersNode pin = null;
+		for(String pkg /* in */ : pkgs)
+		{
+			pin = nodeFactory.packageIdentifiers(pin, nodeFactory.identifier(pkg, false), true);
+		}
+		if(pin != null)
+		{
+			return nodeFactory.statementList(null, nodeFactory.importDirective(null, nodeFactory.packageName(pin), null, ctx));
+		}
+		return null;
+	}
+
+	private boolean isProfilerClass(String profiler_class)
+	{
+		if(profiler_class.indexOf(".") == -1)
+		{
+			return profiler_class.equals(current_class_name);
+		}
+		
+		return profiler_class.endsWith("."+current_class_name);
+	}
     public StatementListNode wrapFunctionBlock(StatementListNode block)
 	{
 			/*
@@ -1591,23 +1615,26 @@ XMLElementContent
 
 			if(profiler_class == null) return block;
 
-			if(!profiler_class.equals(current_class_name))
+			Node profiler = nodeFactory.memberExpression(null, nodeFactory.getExpression(nodeFactory.identifier("Profiler")));
+
+
+			if(!isProfilerClass(profiler_class))
 			{
-				Node enterFunction = nodeFactory.memberExpression(nodeFactory.identifier(profiler_class), nodeFactory.getExpression(nodeFactory.identifier("enterFunction")));
+				Node enterFunction = nodeFactory.memberExpression(profiler, nodeFactory.getExpression(nodeFactory.identifier("enterFunction")));
 
 
 				ArgumentListNode args = nodeFactory.argumentList(null, nodeFactory.literalString(" " /* nodeFactory.current_package*/));
 				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_class_name));
 				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_method_name));
 
-				StatementListNode callEnterFunction = nodeFactory.statementList(null, nodeFactory.callExpression(enterFunction, args));
+				StatementListNode callEnterFunction = nodeFactory.statementList(generateImports(profiler_class), nodeFactory.callExpression(enterFunction, args));
 
 				block = nodeFactory.statementList(callEnterFunction, block);
 
 
-				Node exitFunction = nodeFactory.memberExpression(nodeFactory.identifier(profiler_class), nodeFactory.getExpression(nodeFactory.identifier("exitFunction")));
+				Node exitFunction = nodeFactory.memberExpression(profiler, nodeFactory.getExpression(nodeFactory.identifier("exitFunction")));
 
-				StatementListNode callExitFunction = nodeFactory.statementList(null, nodeFactory.callExpression(exitFunction, args)); 
+				StatementListNode callExitFunction = nodeFactory.statementList(generateImports(profiler_class), nodeFactory.callExpression(exitFunction, args)); 
 				block = nodeFactory.statementList(block, callExitFunction);
 			}
 
@@ -1620,14 +1647,15 @@ XMLElementContent
 
 			if(profiler_class == null) return ret;
 
-			if(!profiler_class.equals(current_class_name))
-			{
+			Node profiler = nodeFactory.memberExpression(null, nodeFactory.getExpression(nodeFactory.identifier("Profiler")));
 
+			if(!isProfilerClass(profiler_class))
+			{
 				ArgumentListNode args = nodeFactory.argumentList(null, nodeFactory.literalString(" " /* nodeFactory.current_package*/));
 				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_class_name));
 				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_method_name));
 
-				Node exitFunction = nodeFactory.memberExpression(nodeFactory.identifier(profiler_class), nodeFactory.getExpression(nodeFactory.identifier("exitFunction")));
+				Node exitFunction = nodeFactory.memberExpression(profiler, nodeFactory.getExpression(nodeFactory.identifier("exitFunction")));
 	
 				StatementListNode callExitFunction = nodeFactory.statementList(null, nodeFactory.callExpression(exitFunction, args));
 				ret = nodeFactory.statementList(callExitFunction, ret);
