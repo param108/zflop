@@ -1593,6 +1593,16 @@ XMLElementContent
 		return null;
 	}
 
+	private String getProfilerClassName(String profiler_class)
+	{
+		if(profiler_class.indexOf(".") == -1)
+		{
+			return profiler_class;
+		}
+		
+		return profiler_class.substring(profiler_class.lastIndexOf(".")+1);
+	}
+
 	private boolean isProfilerClass(String profiler_class)
 	{
 		if(profiler_class.indexOf(".") == -1)
@@ -1615,7 +1625,7 @@ XMLElementContent
 
 			if(profiler_class == null) return block;
 
-			Node profiler = nodeFactory.memberExpression(null, nodeFactory.getExpression(nodeFactory.identifier("Profiler")));
+			Node profiler = nodeFactory.memberExpression(null, nodeFactory.getExpression(nodeFactory.identifier(getProfilerClassName(profiler_class))));
 
 
 			if(!isProfilerClass(profiler_class))
@@ -1647,7 +1657,7 @@ XMLElementContent
 
 			if(profiler_class == null) return ret;
 
-			Node profiler = nodeFactory.memberExpression(null, nodeFactory.getExpression(nodeFactory.identifier("Profiler")));
+			Node profiler = nodeFactory.memberExpression(null, nodeFactory.getExpression(nodeFactory.identifier(getProfilerClassName(profiler_class))));
 
 			if(!isProfilerClass(profiler_class))
 			{
