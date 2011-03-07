@@ -4,14 +4,20 @@ package
     {
         public function sayHello():String 
         {
-/*            var greeting:String;
-            greeting = "Hello World!";
-			trace(greeting);
-            return greeting;*/
-
-	trace("One");
-	return "Hello World!";
+			try {
+			exceptionalCase();
+			}
+			catch(e:Error)
+			{
+				return "Hello World!";
+			}
+			return "This Can't Be Right";
         }
+
+		public function exceptionalCase():void
+		{
+				throw new Error("Just because");
+		}
     }
 
 }
