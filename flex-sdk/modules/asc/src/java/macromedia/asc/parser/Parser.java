@@ -1625,27 +1625,56 @@ XMLElementContent
 
 			if(profiler_class == null) return block;
 
-			Node profiler = nodeFactory.memberExpression(null, nodeFactory.getExpression(nodeFactory.identifier(getProfilerClassName(profiler_class))));
+			/*
+			expression[
+                list[
+                  member[<class macromedia.asc.parser.MemberExpressionNode>
+                    member[|<class macromedia.asc.parser.GetExpressionNode>
+                      get lexical[
+                        identifier Profiler]]|<class macromedia.asc.parser.CallExpressionNode>
+                    call dot[
+                      identifier enterFunction|
+                      argumentlist[
+                        literalstring:|
+                        literalstring:|
+                        literalstring:|]]]|]]
 
-
+			*/
 			if(!isProfilerClass(profiler_class))
 			{
-				Node enterFunction = nodeFactory.memberExpression(profiler, nodeFactory.getExpression(nodeFactory.identifier("enterFunction")));
+
+				if(true)
+				{
+					ArgumentListNode args = nodeFactory.argumentList(null, nodeFactory.literalString(" ")); // nodeFactory.current_package));
+					args = nodeFactory.argumentList(args, nodeFactory.literalString(current_class_name));
+					args = nodeFactory.argumentList(args, nodeFactory.literalString(current_method_name));
+
+					Node qualifier = nodeFactory.memberExpression(null, nodeFactory.getExpression(nodeFactory.identifier(getProfilerClassName(profiler_class))));
+					CallExpressionNode dotCall = (CallExpressionNode)nodeFactory.callExpression(nodeFactory.identifier("enterFunction"), args);
+					Node callEnter = nodeFactory.memberExpression(qualifier, dotCall);
+
+					StatementListNode callEnterList = nodeFactory.statementList(generateImports(profiler_class), nodeFactory.expressionStatement(nodeFactory.list(null, callEnter)));
 
 
-				ArgumentListNode args = nodeFactory.argumentList(null, nodeFactory.literalString(" " /* nodeFactory.current_package*/));
-				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_class_name));
-				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_method_name));
+					block = nodeFactory.statementList(callEnterList, block);
+				}
 
-				StatementListNode callEnterFunction = nodeFactory.statementList(generateImports(profiler_class), nodeFactory.callExpression(enterFunction, args));
+				if(true)
+				{
+					ArgumentListNode args = nodeFactory.argumentList(null, nodeFactory.literalString(" ")); // nodeFactory.current_package));
+					args = nodeFactory.argumentList(args, nodeFactory.literalString(current_class_name));
+					args = nodeFactory.argumentList(args, nodeFactory.literalString(current_method_name));
 
-				block = nodeFactory.statementList(callEnterFunction, block);
+					Node qualifier = nodeFactory.memberExpression(null, nodeFactory.getExpression(nodeFactory.identifier(getProfilerClassName(profiler_class))));
+					CallExpressionNode dotCall = (CallExpressionNode)nodeFactory.callExpression(nodeFactory.identifier("exitFunction"), args);
+					Node callExit = nodeFactory.memberExpression(qualifier, dotCall);
+
+					StatementListNode callExitList = nodeFactory.statementList(generateImports(profiler_class), nodeFactory.expressionStatement(nodeFactory.list(null, callExit)));
 
 
-				Node exitFunction = nodeFactory.memberExpression(profiler, nodeFactory.getExpression(nodeFactory.identifier("exitFunction")));
+					block = nodeFactory.statementList(block, callExitList);
+				}
 
-				StatementListNode callExitFunction = nodeFactory.statementList(generateImports(profiler_class), nodeFactory.callExpression(exitFunction, args)); 
-				block = nodeFactory.statementList(block, callExitFunction);
 			}
 
 			return block;
@@ -1657,20 +1686,27 @@ XMLElementContent
 
 			if(profiler_class == null) return ret;
 
-			Node profiler = nodeFactory.memberExpression(null, nodeFactory.getExpression(nodeFactory.identifier(getProfilerClassName(profiler_class))));
-
 			if(!isProfilerClass(profiler_class))
 			{
-				ArgumentListNode args = nodeFactory.argumentList(null, nodeFactory.literalString(" " /* nodeFactory.current_package*/));
-				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_class_name));
-				args = nodeFactory.argumentList(args, nodeFactory.literalString(current_method_name));
 
-				Node exitFunction = nodeFactory.memberExpression(profiler, nodeFactory.getExpression(nodeFactory.identifier("exitFunction")));
-	
-				StatementListNode callExitFunction = nodeFactory.statementList(null, nodeFactory.callExpression(exitFunction, args));
-				ret = nodeFactory.statementList(callExitFunction, ret);
+				if(true)
+				{
+					ArgumentListNode args = nodeFactory.argumentList(null, nodeFactory.literalString(" ")); // nodeFactory.current_package));
+					args = nodeFactory.argumentList(args, nodeFactory.literalString(current_class_name));
+					args = nodeFactory.argumentList(args, nodeFactory.literalString(current_method_name));
+
+					Node qualifier = nodeFactory.memberExpression(null, nodeFactory.getExpression(nodeFactory.identifier(getProfilerClassName(profiler_class))));
+					CallExpressionNode dotCall = (CallExpressionNode)nodeFactory.callExpression(nodeFactory.identifier("exitFunction"), args);
+					Node callExit = nodeFactory.memberExpression(qualifier, dotCall);
+
+					StatementListNode callExitList = nodeFactory.statementList(generateImports(profiler_class), nodeFactory.expressionStatement(nodeFactory.list(null, callExit)));
+
+
+					ret = nodeFactory.statementList(callExitList, ret);
+				}
+
 			}
-			
+
 			return ret;
 	}
 
