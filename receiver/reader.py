@@ -1,6 +1,6 @@
 import sys
 import re
-
+from phpserialize import dumps as phpserialize
 CLOSED="closed"
 OPEN="open"
 ENTER="enter"
@@ -25,9 +25,11 @@ class FunctionData:
 
 class ProfileInfo:
 	def __init__(self):
+		self.pathDict={}
 		self.functionDict = {}
 		self.thisPath=[]
 		self.pathState=CLOSED
+
 
 	def mungeArray(self, x):
 		s = ""
@@ -42,6 +44,18 @@ class ProfileInfo:
 		for i,f in self.functionDict.iteritems():
 			print i+","+str(f.called)+","+str(f.totalInclTime)+","+str(f.totalExclTime)+","+str(f.maxInclTime)+","+str(f.maxExclTime)+","+self.mungeArray(f.parents)+","+ self.mungeArray(f.children)
 			
+	def pprint(self):
+		return phpserialize(self.pathDict)
+	
+	def updatePathDict(self, parent, me, inclTime):
+		if not parent :
+			funcname = "main()==>"+me
+		else:
+			funcname = parent+"==>"+me
+		if not self.pathDict.has_key(funcname):
+			self.pathDict[funcname] = {"ct":0,"wt":0.0}			
+		self.pathDict[funcname]["ct"]+=1
+		self.pathDict[funcname]["wt"]+=(inclTime/1000.0)
 
 	def handleFunctionExit(self, time, funcname, isException):
 		if not self.functionDict.has_key(funcname):
@@ -61,10 +75,11 @@ class ProfileInfo:
 			fp.presentExclTime[len(fp.presentExclTime)-1]+=inclTime
 			if not self.thisPath[len(self.thisPath)-1] in f.parents:
 				f.parents.append(self.thisPath[len(self.thisPath)-1])	
+			self.updatePathDict(self.thisPath[len(self.thisPath)-1],funcname,inclTime)
 		else:
 			self.pathState = CLOSED
-
-		
+			self.updatePathDict(None,funcname,inclTime)
+	
 	def addEvent(self, time, type, funcname, filename, linenum, linedesc):
 		if not self.functionDict.has_key(funcname):
 			self.functionDict[funcname] = FunctionData();
@@ -112,4 +127,4 @@ for i in lines:
 		print("Fail: failed to match regexp with:"+i)
 		sys.exit(-1)
 	num=num+ 1
-pd.mprint()
+print pd.pprint()
