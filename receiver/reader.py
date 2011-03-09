@@ -49,10 +49,12 @@ class ProfileInfo:
 		return phpserialize(self.pathDict)
 	
 	def updatePathDict(self, parent, me, inclTime):
+		me = me.replace("<","$").replace(">", "$")
 		if not parent :
 			funcname = "main()==>"+me
 			self.pathDict["main()"]["wt"]+=(inclTime*1000.0)
 		else:
+			parent = parent.replace("<","$").replace(">", "$")
 			funcname = parent+"==>"+me
 		if parent == me:
 			funcname = funcname+"@2"
