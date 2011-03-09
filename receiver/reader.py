@@ -25,8 +25,8 @@ class FunctionData:
 
 class ProfileInfo:
 	def __init__(self):
-		self.pathDict={}
-		self.functionDict = {}
+		self.pathDict={"main()":{"ct":1,"wt":0.0}}
+		self.functionDict = {} 
 		self.recurData={}
 		self.thisPath=[]
 		self.pathState=CLOSED
@@ -51,14 +51,16 @@ class ProfileInfo:
 	def updatePathDict(self, parent, me, inclTime):
 		if not parent :
 			funcname = "main()==>"+me
+			self.pathDict["main()"]["wt"]+=(inclTime*1000.0)
 		else:
 			funcname = parent+"==>"+me
 		if parent == me:
 			funcname = funcname+"@2"
+
 		if not self.pathDict.has_key(funcname):
-			self.pathDict[funcname] = {"ct":0.0,"wt":0.0,"cpu":0}			
-		self.pathDict[funcname]["ct"]+=1.0
-		self.pathDict[funcname]["wt"]+=(inclTime/1000.0)
+			self.pathDict[funcname] = {"ct":0,"wt":0.0}			
+		self.pathDict[funcname]["ct"]+=1
+		self.pathDict[funcname]["wt"]+=(inclTime*1000.0)
 
 	def handleFunctionExit(self, time, funcname, isException):
 		if not self.functionDict.has_key(funcname):
