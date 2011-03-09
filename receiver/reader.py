@@ -27,6 +27,7 @@ class ProfileInfo:
 	def __init__(self):
 		self.pathDict={}
 		self.functionDict = {}
+		self.recurData={}
 		self.thisPath=[]
 		self.pathState=CLOSED
 
@@ -52,9 +53,11 @@ class ProfileInfo:
 			funcname = "main()==>"+me
 		else:
 			funcname = parent+"==>"+me
+		if parent == me:
+			funcname = funcname+"@2"
 		if not self.pathDict.has_key(funcname):
-			self.pathDict[funcname] = {"ct":0,"wt":0.0}			
-		self.pathDict[funcname]["ct"]+=1
+			self.pathDict[funcname] = {"ct":0.0,"wt":0.0,"cpu":0}			
+		self.pathDict[funcname]["ct"]+=1.0
 		self.pathDict[funcname]["wt"]+=(inclTime/1000.0)
 
 	def handleFunctionExit(self, time, funcname, isException):
@@ -80,37 +83,63 @@ class ProfileInfo:
 			self.pathState = CLOSED
 			self.updatePathDict(None,funcname,inclTime)
 	
+	def checkRecursion(self, fname):
+		return fname
+
+	def checkRecursionExit(self, fname):
+		return fname
+
 	def addEvent(self, time, type, funcname, filename, linenum, linedesc):
-		if not self.functionDict.has_key(funcname):
-			self.functionDict[funcname] = FunctionData();
-		f = self.functionDict[funcname]
 		if type == ENTER:
+			fname=self.checkRecursion(funcname)
+			if not self.functionDict.has_key(fname):
+				self.functionDict[fname] = FunctionData();
+			f = self.functionDict[fname]
 			if self.pathState != CLOSED:
 				parent = self.thisPath[len(self.thisPath)-1]
 				if not parent in f.parents:
 					f.parents.append(parent)
 				fp=self.functionDict[parent];
-				if not funcname in fp.children:
-					fp.children.append(funcname)
+				if not fname in fp.children:
+					fp.children.append(fname)
 				# for recursion
 			else:
 				self.pathState = OPEN
 			f.called+=1
 			f.presentInclTime.append(int(time))
 			f.presentExclTime.append(int(time))
-			self.thisPath.append(funcname)
+			self.thisPath.append(fname)
 		if type == EXIT:
+			fname=self.checkRecursionExit(funcname)
+			if not self.functionDict.has_key(fname):
+				self.functionDict[fname] = FunctionData();
+			f = self.functionDict[fname]
 			if self.pathState != CLOSED:
 				shouldBeMe = self.thisPath.pop(); 
-				while not shouldBeMe == funcname:
+				while not shouldBeMe == fname:
 					self.handleFunctionExit(time, shouldBeMe, True)	
 					if len(self.thisPath) == 0:
 						print "Failing Ayo!:"+str(linedesc)
 					shouldBeMe = self.thisPath.pop() 
-				self.handleFunctionExit(time, funcname, False)	
+				self.handleFunctionExit(time, fname, False)	
 			else:
-				print "Fail: exit without entry for "+funcname+"\n"
+				print "Fail: exit without entry for "+fname+"\n"
 				sys.exit(-1);	
+
+
+
+fnamere = re.compile("(.*)@.*;(.*)")
+def translateFuncName(data,lnum):
+	#add@InitializationManager.as:62;InitializationManager
+	m = fnamere.match(data)
+	if m:
+		g = m.groups()
+		out=g[1]+"::"+g[0]
+		#print out
+		return out
+	else:
+		print "fail:"+str(lnum)
+		sys.exit(-1)
 
 pd = ProfileInfo()
 filep = open("flash4-unix.prof","r")
@@ -122,7 +151,7 @@ for i in lines:
 	m = profre.match(i)
 	if m:
 		g = m.groups()
-		pd.addEvent(g[0],typeTranslate[g[1]],g[2],"junk","junk", num)
+		pd.addEvent(g[0],typeTranslate[g[1]],translateFuncName(g[2],num),"junk","junk", num)
 	else:
 		print("Fail: failed to match regexp with:"+i)
 		sys.exit(-1)
