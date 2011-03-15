@@ -2,7 +2,6 @@ import sys
 import re
 from phpserialize import dumps as phpserialize
 from collections import defaultdict
-from StringIO import StringIO as StringBuffer
 
 class XHProfData(object):
 	def __init__(self):
@@ -39,8 +38,10 @@ class FunctionInfo(object):
 		elif isinstance(v, tuple):
 			return v == (self.klass, self.func)
 		return False
-	def __repr__(self):
+	def __str__(self):
 		func = self.func
+		func = func.replace("<", "$")
+		func = func.replace(">", "$")
 		if(self.recursion):
 			func = "%s@%d" % (self.func, self.recursion)
 		if(self.klass):	return "%s::%s" % (self.klass, func);
@@ -92,13 +93,14 @@ class FlashTraceReader(object):
 			elif(event_type == "Exit"):
 				self.stackmaker.exitFunction(int(m.group("ts")), m.group("class"), m.group("func"),"")
 
-xh = XHProfData()
-fr = FlashTraceReader(StackTraceMaker(xh))
+if __name__ == "__main__":
+	xh = XHProfData()
+	fr = FlashTraceReader(StackTraceMaker(xh))
 
-lines = open("flash4-unix.prof").xreadlines()
+	lines = open("flash4-unix.prof").xreadlines()
+	
+	for l in lines:
+		fr.push(l)
 
-for l in lines:
-	fr.push(l)
-
-fp = open("x.xhprof", "w")
-fp.write(xh.data())
+	fp = open("x.xhprof", "w")
+	fp.write(xh.data())
