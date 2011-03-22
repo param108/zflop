@@ -17,7 +17,7 @@ class XHProfData(object):
 	
 	def push(self, key, wt, ct=1, mu=0):
 		self.entries[key]["wt"] += wt
-		self.entries[key]["ct"] += 1
+		self.entries[key]["ct"] += ct
 		self.entries[key]["mu"] += mu
 		
 	
@@ -110,7 +110,7 @@ class FlashRecordReader(object):
 			(p, c) = key.split("==>")
 			if(p == c): c = c + "@1"
 			if(p == "main()"): 
-				self.xhprof.push(p, float(wt), 0, 0)
+				self.xhprof.push(p, float(wt), 0, int(mu))
 			self.xhprof.push("%s==>%s" % (p,c), float(wt), int(ct), int(mu))
 	
 if __name__ == "__main__":

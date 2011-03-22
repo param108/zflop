@@ -15,7 +15,7 @@ class PolicyHandler(StreamRequestHandler):
 		self.wfile.write(open("flashpolicy.xml").read())
 		self.wfile.flush()
 
-class FlashTraceHandler(StreamRequestHandler):
+class FlashHandler(StreamRequestHandler):
 	def handle(self):
 		xh = XHProfData()
 		#fr = FlashTraceReader(StackTraceMaker(xh))
@@ -24,19 +24,25 @@ class FlashTraceHandler(StreamRequestHandler):
 		sz = 0
 		fname = "%s-%d.xhprof" % (self.client_address)
 		print "Writing data to %s at the end of session" % fname
-		while line:
-			line = self.rfile.readline().strip()
-			if(line):
-				sz += len(line)
-				try:
-					fr.push(line)
-				except Exception as e:
-					print "\n\n - error with '%s'\n" % (line)
-					print e
-					# keep going
-				print "Processing .... %d kb\r" % (sz/1024),
-				sys.stdout.flush()
+		log = open("out.txt", "w")
+		try:
+			while line:
+				line = self.rfile.readline().strip()
+				if(line):
+					log.write(line+"\n")
+					sz += len(line)
+					try:
+						fr.push(line)
+					except Exception as e:
+						print "\n\n - error with '%s'\n" % (line)
+						print e
+						# keep going
+					print "Processing .... %d kb\r" % (sz/1024),
+					sys.stdout.flush()
+		except:
+			print "Error, continuing to dump profile anyway"
 		print "\n"
+		log.close()
 		fp = open(fname, "w")
 		xhprof = xh.data()
 		print "Writing %d kb to %s\n" % ((len(xhprof)/1024), fname)
@@ -59,6 +65,8 @@ class FlashTraceHandler(StreamRequestHandler):
 			print "Upload failed. Please upload manually to %s" % (XHPROF_UPLOAD_URL)
 
 def serve_forever(*servers):
+	print "\n".join(["Listening on %s:%d" % s.server_address for s in servers])
+
 	while True:
 		r,w,e = select(servers,[],[],0.5)
 		for s in r:
@@ -67,6 +75,6 @@ def serve_forever(*servers):
 if __name__ == "__main__":
 
 	policy_server = TCPServer(("", 843), PolicyHandler)
-	trace_server = TCPServer(("", 42426), FlashTraceHandler)
+	trace_server = TCPServer(("", 42426), FlashHandler)
 
 	serve_forever(policy_server, trace_server)
