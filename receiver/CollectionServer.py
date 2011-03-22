@@ -2,7 +2,12 @@ import sys,re,math,os
 from select import select
 from SocketServer import TCPServer, StreamRequestHandler
 
-from Stacker import XHProfData, FlashTraceReader, StackTraceMaker
+from Stacker import XHProfData, FlashTraceReader, StackTraceMaker, FlashRecordReader
+from MultipartPostHandler import MultipartPostHandler
+import urllib2 
+import webbrowser
+
+XHPROF_UPLOAD_URL = "http://zperfmon-01.ec2.zynga.com/zprof/uploader.php"
 
 class PolicyHandler(StreamRequestHandler):
 	def handle(self):
@@ -13,7 +18,8 @@ class PolicyHandler(StreamRequestHandler):
 class FlashTraceHandler(StreamRequestHandler):
 	def handle(self):
 		xh = XHProfData()
-		fr = FlashTraceReader(StackTraceMaker(xh))
+		#fr = FlashTraceReader(StackTraceMaker(xh))
+		fr = FlashRecordReader(xh)
 		line = True
 		sz = 0
 		fname = "%s-%d.xhprof" % (self.client_address)
@@ -29,12 +35,28 @@ class FlashTraceHandler(StreamRequestHandler):
 					print e
 					# keep going
 				print "Processing .... %d kb\r" % (sz/1024),
+				sys.stdout.flush()
 		print "\n"
 		fp = open(fname, "w")
 		xhprof = xh.data()
 		print "Writing %d kb to %s\n" % ((len(xhprof)/1024), fname)
 		fp.write(xhprof)
 		fp.close()
+		print "Uploading data to %s ... " % (XHPROF_UPLOAD_URL)
+		sys.stdout.flush()
+		self.upload(fname)
+	
+	def upload(self, fname):
+		try:
+			opener = urllib2.build_opener(MultipartPostHandler)
+			params = { "filename": fname, "uploaded_file" : open(fname, "rb")}
+			o = opener.open(XHPROF_UPLOAD_URL, params)
+			url = o.read()
+			if(url[:4] == "http"):
+				print "Visit %s " % url
+				webbrowser.open(url)
+		except:
+			print "Upload failed. Please upload manually to %s" % (XHPROF_UPLOAD_URL)
 
 def serve_forever(*servers):
 	while True:
@@ -44,7 +66,7 @@ def serve_forever(*servers):
 
 if __name__ == "__main__":
 
-	policy_server = TCPServer(("", 8430), PolicyHandler)
+	policy_server = TCPServer(("", 843), PolicyHandler)
 	trace_server = TCPServer(("", 42426), FlashTraceHandler)
 
 	serve_forever(policy_server, trace_server)
